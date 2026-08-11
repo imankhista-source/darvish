@@ -181,6 +181,11 @@ display:none;
 font-size:14px;
 }
 
+.message.error{
+background:#fff0f0;
+color:#d00000;
+}
+
 .voter-count{
 margin-top:10px;
 padding:10px;
@@ -923,9 +928,15 @@ email !== registeredEmail ||
 password !== registeredPassword
 ){
 
-showAccountMessage(
-"ایمیل یا رمز عبور اشتباه است."
-);
+const message=
+document.getElementById("accountMessage");
+
+message.innerText=
+"ایمیل یا رمز عبور اشتباه است.";
+
+message.classList.add("error");
+
+message.style.display="block";
 
 return;
 
@@ -934,10 +945,10 @@ return;
 
 /* ورود موفق */
 
-localStorage.setItem(
-"didgahUser",
-email
-);
+document.getElementById("accountMessage")
+.classList.remove("error");
+
+showPage("homePage");
 
 
 const pendingVote=
