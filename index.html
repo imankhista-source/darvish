@@ -1,1 +1,1208 @@
- 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>دیدگاه</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f8;
+color:#222;
+min-height:100vh;
+}
+
+header{
+background:#ffffff;
+padding:18px;
+text-align:center;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+header h1{
+font-size:25px;
+}
+
+header p{
+font-size:13px;
+color:#777;
+margin-top:5px;
+}
+
+.container{
+width:92%;
+max-width:650px;
+margin:25px auto;
+}
+
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
+
+.card{
+background:#fff;
+border-radius:16px;
+padding:20px;
+margin-bottom:18px;
+box-shadow:0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card h2{
+margin-bottom:12px;
+font-size:20px;
+}
+
+.category-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+}
+
+.category{
+background:#f1f3f5;
+border:none;
+border-radius:14px;
+padding:22px 10px;
+font-size:17px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.category:hover{
+background:#e4e7ea;
+}
+
+.poll-option{
+display:block;
+width:100%;
+text-align:right;
+padding:14px;
+margin:10px 0;
+border:1px solid #ddd;
+border-radius:12px;
+background:#fff;
+cursor:pointer;
+}
+
+.poll-option input{
+margin-left:8px;
+}
+
+.poll-option.disabled{
+opacity:0.55;
+cursor:not-allowed;
+}
+
+button{
+border:none;
+border-radius:12px;
+padding:13px 20px;
+font-size:15px;
+cursor:pointer;
+}
+
+.primary-btn{
+background:#222;
+color:#fff;
+width:100%;
+margin-top:10px;
+}
+
+.primary-btn:disabled{
+background:#aaa;
+cursor:not-allowed;
+}
+
+.back-btn{
+background:#e9ecef;
+color:#222;
+margin-bottom:15px;
+display:block;
+margin-right:auto;
+margin-left:0;
+}
+
+.account-btn{
+background:#222;
+color:#fff;
+margin-top:15px;
+width:100%;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"]{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:10px;
+margin:8px 0 14px;
+font-size:15px;
+}
+
+.link-btn{
+background:none;
+border:none;
+color:#555;
+padding:5px;
+margin-top:8px;
+}
+
+.link-btn:hover{
+text-decoration:underline;
+}
+
+.message{
+padding:12px;
+border-radius:10px;
+margin-top:12px;
+background:#f1f3f5;
+display:none;
+font-size:14px;
+}
+.voter-count{
+margin-top:10px;
+padding:10px;
+background:#f1f3f5;
+border-radius:10px;
+font-size:14px;
+color:#555;
+}
+.result{
+margin-top:15px;
+}
+
+.result-row{
+margin:12px 0;
+}
+
+.result-label{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+margin-bottom:5px;
+}
+
+.bar{
+height:10px;
+background:#e9ecef;
+border-radius:10px;
+overflow:hidden;
+}
+
+.bar-fill{
+height:100%;
+background:#555;
+width:0%;
+transition:0.4s;
+direction:ltr;
+margin-right:auto;
+margin-left:0;
+}
+
+.account-info{
+line-height:2;
+}
+
+.status{
+padding:10px;
+background:#f1f3f5;
+border-radius:10px;
+margin-top:10px;
+}
+
+.small{
+font-size:13px;
+color:#777;
+}
+
+footer{
+text-align:center;
+padding:30px 10px;
+font-size:12px;
+color:#888;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<h1>دیدگاه</h1>
+
+<p>صدای شما، دیدگاه جامعه</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- ================= HOME ================= -->
+
+<section id="homePage" class="page active">
+
+<div class="card">
+
+<h2>دسته ‌بندی ‌ها</h2>
+
+<div class="category-grid">
+
+<button class="category"
+onclick="openPolls('ورزش')">
+⚽ ورزش
+</button>
+
+<button class="category"
+onclick="openPolls('فرهنگ')">
+📚 فرهنگ
+</button>
+
+<button class="category"
+onclick="openPolls('اقتصاد')">
+💰 اقتصاد
+</button>
+
+<button class="category"
+onclick="openPolls('سیاست')">
+🏛️ سیاست
+</button>
+
+<button class="category"
+onclick="openPolls('طبیعت')">
+🌱 طبیعت
+</button>
+
+<button class="category"
+onclick="openPolls('هنر')">
+🎨 هنر
+</button>
+
+<button class="category"
+onclick="openPolls('علم')">
+🔬 علم
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>حساب کاربری</h2>
+
+<p class="small">
+برای مدیریت حساب و مشاهده وضعیت رأی‌ها وارد حساب خود شوید.
+</p>
+
+<button
+class="account-btn"
+onclick="showPage('accountPage')">
+
+ورود / حساب کاربری
+
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= POLLS ================= -->
+
+<section id="pollPage" class="page">
+
+<button
+class="back-btn"
+onclick="showPage('homePage')">
+
+بازگشت
+
+</button>
+
+
+<div class="card">
+
+<h2 id="categoryTitle"></h2>
+
+<div id="pollList"></div>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= ACCOUNT ================= -->
+
+<section id="accountPage" class="page">
+
+<button
+class="back-btn"
+onclick="showPage('homePage')">
+
+بازگشت
+
+</button>
+
+
+<div class="card">
+
+<h2>حساب کاربری</h2>
+
+<div id="loggedOut">
+
+<label>ایمیل</label>
+
+<input
+type="email"
+id="email"
+placeholder="ایمیل خود را وارد کنید">
+
+
+<label>رمز عبور</label>
+
+<input
+type="password"
+id="password"
+placeholder="رمز عبور">
+
+
+<button
+class="primary-btn"
+onclick="login()">
+
+ورود
+
+</button>
+
+
+<button
+class="link-btn"
+onclick="showRegister()">
+
+ایجاد حساب جدید
+
+</button>
+
+
+<br>
+
+<button
+class="link-btn"
+onclick="forgotPassword()">
+
+فراموشی رمز عبور
+
+</button>
+
+</div>
+
+
+<div id="loggedIn"
+style="display:none">
+
+<div class="account-info">
+
+<p>
+<strong>ایمیل:</strong>
+<span id="userEmail"></span>
+</p>
+
+<div class="status">
+
+تعداد رأی‌های ثبت‌شده:
+<strong id="voteCount">0</strong>
+
+</div>
+
+</div>
+
+<button
+class="primary-btn"
+onclick="logout()">
+
+خروج از حساب
+
+</button>
+
+</div>
+
+
+<div
+id="accountMessage"
+class="message">
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= REGISTER ================= -->
+
+<section id="registerPage" class="page">
+
+<button
+class="back-btn"
+onclick="showPage('accountPage')">
+
+بازگشت
+
+</button>
+
+
+<div class="card">
+
+<h2>ایجاد حساب</h2>
+
+
+<label>ایمیل</label>
+
+<input
+type="email"
+id="registerEmail"
+placeholder="ایمیل">
+
+
+<label>رمز عبور</label>
+
+<input
+type="password"
+id="registerPassword"
+placeholder="رمز عبور">
+
+
+<label>تکرار رمز عبور</label>
+
+<input
+type="password"
+id="registerPassword2"
+placeholder="تکرار رمز عبور">
+
+
+<button
+class="primary-btn"
+onclick="register()">
+
+ثبت‌نام
+
+</button>
+
+
+<div
+id="registerMessage"
+class="message">
+</div>
+
+</div>
+
+</section>
+
+
+
+</div>
+
+
+<footer>
+
+دیدگاه © 2026
+
+</footer>
+
+
+
+<script>
+
+
+/* ================= DATA ================= */
+
+const polls = {
+
+"ورزش":[
+{
+question:"بهترین ورزش برای افزایش سلامت عمومی چیست؟",
+options:[
+"پیاده‌روی",
+"شنا",
+"دویدن",
+"دوچرخه‌سواری"
+]
+}
+],
+
+"فرهنگ":[
+{
+question:"کدام مورد بیشترین نقش را در حفظ فرهنگ دارد؟",
+options:[
+"زبان",
+"هنر",
+"کتاب",
+"آداب و رسوم"
+]
+}
+],
+
+"اقتصاد":[
+{
+question:"مهم‌ترین عامل رشد اقتصادی چیست؟",
+options:[
+"تولید",
+"سرمایه‌گذاری",
+"صادرات",
+"فناوری"
+]
+}
+],
+
+"سیاست":[
+{
+question:"کدام عامل بیشترین نقش را در مشارکت اجتماعی دارد؟",
+options:[
+"آگاهی",
+"اعتماد",
+"آموزش",
+"رسانه"
+]
+}
+],
+
+"طبیعت":[
+{
+question:"مهم‌ترین اقدام برای حفاظت از طبیعت چیست؟",
+options:[
+"کاهش مصرف",
+"بازیافت",
+"کاشت درخت",
+"حفاظت از آب"
+]
+}
+],
+
+"هنر":[
+{
+question:"کدام هنر بیشترین تأثیر را بر جامعه دارد؟",
+options:[
+"سینما",
+"موسیقی",
+"نقاشی",
+"ادبیات"
+]
+}
+],
+
+"علم":[
+{
+question:"مهم‌ترین عامل پیشرفت علمی چیست؟",
+options:[
+"آموزش",
+"پژوهش",
+"سرمایه‌گذاری",
+"همکاری"
+]
+}
+]
+
+};
+
+
+
+/* ================= PAGE CONTROL ================= */
+
+function showPage(pageId){
+
+document.querySelectorAll(".page")
+.forEach(page=>{
+page.classList.remove("active");
+});
+
+document.getElementById(pageId)
+.classList.add("active");
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+
+/* ================= POLLS ================= */
+
+function openPolls(category){
+
+showPage("pollPage");
+
+document.getElementById("categoryTitle")
+.innerText=category;
+
+const pollList=
+document.getElementById("pollList");
+
+pollList.innerHTML="";
+
+polls[category].forEach((poll,index)=>{
+
+const pollId=
+category+"_"+index;
+
+const voted=
+localStorage.getItem("voted_"+pollId);
+
+let html=`
+
+<div>
+
+<h3>${poll.question}</h3>
+`;
+
+poll.options.forEach((option,i)=>{
+
+html+=`
+
+<label class="poll-option
+${voted ? "disabled":""}">
+
+<input
+type="radio"
+name="${pollId}"
+value="${i}"
+${voted ? "disabled":""}>
+
+${option}
+
+</label>
+
+`;
+
+});
+
+
+html+=`
+
+<button
+class="primary-btn"
+id="voteBtn_${pollId}"
+onclick="submitVote('${pollId}')"
+${voted ? "disabled":""}>
+
+${voted ? "رأی ثبت شده است" : "ثبت رأی"}
+
+</button>
+
+<div
+id="result_${pollId}"
+class="result">
+</div>
+
+</div>
+
+<hr style="margin:25px 0;border:none;border-top:1px solid #eee">
+
+`;
+
+pollList.innerHTML+=html;
+
+if(voted){
+
+showResults(pollId,poll.options);
+
+}
+
+});
+
+}
+
+
+
+/* ================= SUBMIT VOTE ================= */
+
+function submitVote(pollId){
+
+/* بررسی ورود کاربر */
+
+const user =
+localStorage.getItem("didgahUser");
+
+if(!user){
+
+/* ذخیره نظرسنجی موردنظر */
+
+localStorage.setItem(
+"pendingVote",
+pollId
+);
+
+/* انتقال به صفحه حساب کاربری */
+
+showPage("accountPage");
+
+showAccountMessage(
+"برای ثبت رأی ابتدا وارد حساب کاربری شوید."
+);
+
+return;
+
+}
+
+
+/* پیدا کردن گزینه انتخاب شده */
+
+const selected=
+document.querySelector(
+`input[name="${pollId}"]:checked`
+);
+
+if(!selected){
+
+alert("لطفاً یک گزینه را انتخاب کنید.");
+
+return;
+
+}
+
+
+/* ثبت رأی */
+
+localStorage.setItem(
+"voted_"+pollId,
+selected.value
+);
+
+
+/* غیرفعال کردن گزینه‌ها */
+
+document
+.querySelectorAll(
+`input[name="${pollId}"]`
+)
+.forEach(input=>{
+
+input.disabled=true;
+
+input
+.closest(".poll-option")
+.classList.add("disabled");
+
+});
+
+
+/* غیرفعال کردن دکمه */
+
+const button=
+document.getElementById(
+"voteBtn_"+pollId
+);
+
+button.disabled=true;
+
+button.innerText=
+"رأی ثبت شده است";
+
+
+/* نمایش نتیجه */
+
+const category=
+document.getElementById(
+"categoryTitle"
+).innerText;
+
+const pollIndex=
+pollId.split("_")[1];
+
+showResults(
+pollId,
+polls[category][pollIndex].options
+);
+
+}
+
+
+
+/* ================= RESULTS ================= */
+
+function showResults(pollId,options){
+
+const result=
+document.getElementById(
+"result_"+pollId
+);
+
+if(!result)return;
+
+let selected=
+localStorage.getItem(
+"voted_"+pollId
+);
+
+if(selected===null)return;
+
+
+/* تعداد رأی‌های ثبت شده روی این دستگاه */
+
+let voterCount=1;
+
+
+/* نتایج آزمایشی */
+
+let percentages=
+options.map(()=>{
+return Math.floor(100/options.length);
+});
+
+let remaining=
+100-percentages.reduce(
+(a,b)=>a+b,0
+);
+
+percentages[0]+=remaining;
+
+
+/* نمایش تعداد رأی‌دهندگان */
+
+result.innerHTML=`
+
+<div class="voter-count">
+
+👥 تعداد رأی‌دهندگان:
+<strong>${voterCount}</strong>
+
+</div>
+
+<strong style="display:block;margin-top:15px;">
+نتایج
+</strong>
+
+`;
+
+
+/* نمایش درصدها */
+
+options.forEach((option,index)=>{
+
+result.innerHTML+=`
+
+<div class="result-row">
+
+<div class="result-label">
+
+<span>${option}</span>
+
+<span>${percentages[index]}%</span>
+
+</div>
+
+<div class="bar">
+
+<div
+class="bar-fill"
+style="width:${percentages[index]}%">
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+
+/* ================= ACCOUNT ================= */
+
+function login(){
+
+const email=
+document.getElementById("email")
+.value.trim();
+
+const password=
+document.getElementById("password")
+.value;
+
+
+if(!email || !password){
+
+showAccountMessage(
+"لطفاً ایمیل و رمز عبور را وارد کنید."
+);
+
+return;
+
+}
+
+
+/* ورود کاربر */
+
+localStorage.setItem(
+"didgahUser",
+email
+);
+
+
+/* بررسی اینکه کاربر از داخل رأی آمده یا نه */
+
+const pendingVote=
+localStorage.getItem(
+"pendingVote"
+);
+
+if(pendingVote){
+
+localStorage.removeItem(
+"pendingVote"
+);
+
+/* بازگشت به صفحه نظرسنجی */
+
+const parts=
+pendingVote.split("_");
+
+const category=parts[0];
+
+showPage("pollPage");
+
+document.getElementById(
+"categoryTitle"
+).innerText=category;
+
+openPolls(category);
+
+return;
+
+}
+
+
+/* ورود عادی */
+
+loadAccount();
+
+}
+
+
+
+function loadAccount(){
+
+const user=
+localStorage.getItem("didgahUser");
+
+if(user){
+
+document.getElementById(
+"loggedOut"
+).style.display="none";
+
+document.getElementById(
+"loggedIn"
+).style.display="block";
+
+document.getElementById(
+"userEmail"
+).innerText=user;
+
+
+/* شمارش رأی‌ها */
+
+let count=0;
+
+Object.keys(localStorage)
+.forEach(key=>{
+
+if(key.startsWith("voted_")){
+count++;
+}
+
+});
+
+document.getElementById(
+"voteCount"
+).innerText=count;
+
+}
+
+}
+
+
+
+function logout(){
+
+localStorage.removeItem(
+"didgahUser"
+);
+
+document.getElementById(
+"loggedOut"
+).style.display="block";
+
+document.getElementById(
+"loggedIn"
+).style.display="none";
+
+}
+
+
+
+/* ================= REGISTER ================= */
+
+function showRegister(){
+
+showPage("registerPage");
+
+}
+
+
+
+function register(){
+
+const email=
+document.getElementById(
+"registerEmail"
+).value.trim();
+
+const password=
+document.getElementById(
+"registerPassword"
+).value;
+
+const password2=
+document.getElementById(
+"registerPassword2"
+).value;
+
+
+if(!email || !password || !password2){
+
+showRegisterMessage(
+"لطفاً همه قسمت‌ها را کامل کنید."
+);
+
+return;
+
+}
+
+
+if(password!==password2){
+
+showRegisterMessage(
+"رمزهای عبور یکسان نیستند."
+);
+
+return;
+
+}
+
+
+/*
+نسخه آزمایشی:
+اطلاعات ورود فقط روی همین دستگاه ذخیره می‌شود.
+*/
+
+localStorage.setItem(
+"registeredEmail",
+email
+);
+
+localStorage.setItem(
+"registeredPassword",
+password
+);
+
+localStorage.setItem(
+"didgahUser",
+email
+);
+
+
+showPage("accountPage");
+
+loadAccount();
+
+}
+
+
+
+function forgotPassword(){
+
+showAccountMessage(
+"برای نسخه آزمایشی، بازیابی رمز عبور در مرحله بعد به سیستم واقعی حساب کاربری متصل خواهد شد."
+);
+
+}
+
+
+
+/* ================= MESSAGES ================= */
+
+function showAccountMessage(text){
+
+const message=
+document.getElementById(
+"accountMessage"
+);
+
+message.innerText=text;
+
+message.style.display="block";
+
+}
+
+
+
+function showRegisterMessage(text){
+
+const message=
+document.getElementById(
+"registerMessage"
+);
+
+message.innerText=text;
+
+message.style.display="block";
+
+}
+
+
+
+/* ================= START ================= */
+
+loadAccount();
+
+
+</script>
+
+
+</body>
+
+</html>
