@@ -448,7 +448,10 @@ onclick="logout()">
 </button>
 
 </div>
-
+<div
+id="voteHistory"
+style="margin-top:15px;">
+</div>
 <div
 id="accountMessage"
 class="message">
@@ -962,7 +965,7 @@ localStorage.setItem(
 "didgahUser",
 email
 );
-
+loadAccount();
 
 /* بررسی رأی در انتظار */
 
@@ -1005,10 +1008,25 @@ loadAccount();
 
 function loadAccount(){
 
-const user=
+const user =
 localStorage.getItem("didgahUser");
 
-if(user){
+if(!user){
+
+document.getElementById(
+"loggedOut"
+).style.display="block";
+
+document.getElementById(
+"loggedIn"
+).style.display="none";
+
+return;
+
+}
+
+
+/* نمایش حساب */
 
 document.getElementById(
 "loggedOut"
@@ -1022,6 +1040,8 @@ document.getElementById(
 "userEmail"
 ).innerText=user;
 
+
+/* شمارش رأی‌ها */
 
 let count=0;
 
@@ -1038,159 +1058,120 @@ document.getElementById(
 "voteCount"
 ).innerText=count;
 
-}
 
-}
+/* ================= تاریخچه رأی‌ها ================= */
 
+const history =
+document.getElementById("voteHistory");
 
-/* ================= LOGOUT ================= */
-
-function logout(){
-
-localStorage.removeItem(
-"didgahUser"
-);
-
-document.getElementById(
-"loggedOut"
-).style.display="block";
-
-document.getElementById(
-"loggedIn"
-).style.display="none";
-
-}
+history.innerHTML="";
 
 
-/* ================= REGISTER ================= */
+if(count===0){
 
-function showRegister(){
+history.innerHTML=`
 
-showPage("registerPage");
+<div class="status">
 
-}
+هنوز هیچ رأیی ثبت نکرده‌اید.
 
+</div>
 
-function register(){
-
-const email=
-document.getElementById(
-"registerEmail"
-).value.trim();
-
-const password=
-document.getElementById(
-"registerPassword"
-).value;
-
-const password2=
-document.getElementById(
-"registerPassword2"
-).value;
-
-
-if(!email || !password || !password2){
-
-showRegisterMessage(
-"لطفاً همه قسمت‌ها را کامل کنید."
-);
+`;
 
 return;
 
 }
 
 
-if(password!==password2){
+history.innerHTML=`
 
-showRegisterMessage(
-"رمزهای عبور یکسان نیستند."
-);
+<strong>
+سوابق رأی‌ها
+</strong>
 
+`;
+
+
+/* پیدا کردن رأی‌ها */
+
+Object.keys(localStorage)
+.forEach(key=>{
+
+if(!key.startsWith("voted_")){
 return;
-
 }
 
 
-/* جلوگیری از ثبت حساب تکراری */
+const pollId =
+key.replace("voted_","");
 
-const existingEmail=
-localStorage.getItem(
-"registeredEmail"
-);
 
-if(existingEmail){
+const parts =
+pollId.split("_");
 
-showRegisterMessage(
-"یک حساب قبلاً روی این دستگاه ثبت شده است."
-);
 
+const category =
+parts[0];
+
+const pollIndex =
+parseInt(parts[1]);
+
+
+if(
+!polls[category] ||
+!polls[category][pollIndex]
+){
 return;
-
 }
 
 
-/* ذخیره حساب */
+const poll =
+polls[category][pollIndex];
 
-localStorage.setItem(
-"registeredEmail",
-email
-);
 
-localStorage.setItem(
-"registeredPassword",
-password
-);
-
-localStorage.setItem(
-"didgahUser",
-email
+const selectedIndex =
+parseInt(
+localStorage.getItem(key)
 );
 
 
-showPage("accountPage");
-
-loadAccount();
-
-}
+const selectedOption =
+poll.options[selectedIndex];
 
 
-/* ================= FORGOT PASSWORD ================= */
+history.innerHTML+=`
 
-function forgotPassword(){
+<div
+class="status"
+style="margin-top:10px;">
 
-showAccountMessage(
-"برای نسخه آزمایشی، بازیابی رمز عبور در مرحله بعد به سیستم واقعی حساب کاربری متصل خواهد شد."
-);
+<div style="font-weight:bold;margin-bottom:8px;">
 
-}
+${category}
 
+</div>
 
-/* ================= MESSAGES ================= */
+<div style="font-size:14px;margin-bottom:8px;">
 
-function showAccountMessage(text){
+${poll.question}
 
-const message=
-document.getElementById(
-"accountMessage"
-);
+</div>
 
-message.innerText=text;
+<div class="small">
 
-message.style.display="block";
+انتخاب شما:
+<strong>
+${selectedOption}
+</strong>
 
-}
+</div>
 
+</div>
 
-function showRegisterMessage(text){
+`;
 
-const message=
-document.getElementById(
-"registerMessage"
-);
-
-message.innerText=text;
-
-message.style.display="block";
+});
 
 }
 
