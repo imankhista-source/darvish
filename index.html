@@ -891,7 +891,6 @@ style="width:${percentages[index]}%">
 
 
 /* ================= ACCOUNT ================= */
-
 function login(){
 
 const email=
@@ -903,18 +902,30 @@ document.getElementById("password")
 .value;
 
 
+/* پاک کردن پیام قبلی */
+
+const message=
+document.getElementById("accountMessage");
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+/* بررسی خالی بودن */
+
 if(!email || !password){
 
-showAccountMessage(
-"لطفاً ایمیل و رمز عبور را وارد کنید."
-);
+message.innerText=
+"لطفاً ایمیل و رمز عبور را وارد کنید.";
+
+message.style.display="block";
 
 return;
 
 }
 
 
-/* بررسی حساب ثبت‌شده */
+/* اطلاعات حساب ثبت‌شده */
 
 const registeredEmail=
 localStorage.getItem("registeredEmail");
@@ -923,13 +934,12 @@ const registeredPassword=
 localStorage.getItem("registeredPassword");
 
 
+/* بررسی ایمیل و رمز عبور */
+
 if(
 email !== registeredEmail ||
 password !== registeredPassword
 ){
-
-const message=
-document.getElementById("accountMessage");
 
 message.innerText=
 "ایمیل یا رمز عبور اشتباه است.";
@@ -943,24 +953,29 @@ return;
 }
 
 
-/* ورود موفق */
+/* ================= ورود موفق ================= */
 
-document.getElementById("accountMessage")
-.classList.remove("error");
 
-showPage("homePage");
+/* ذخیره کاربر واردشده */
 
+localStorage.setItem(
+"didgahUser",
+email
+);
+
+
+/* بررسی رأی در انتظار */
 
 const pendingVote=
-localStorage.getItem(
-"pendingVote"
-);
+localStorage.getItem("pendingVote");
+
 
 if(pendingVote){
 
-localStorage.removeItem(
-"pendingVote"
-);
+localStorage.removeItem("pendingVote");
+
+
+/* بازگشت به نظرسنجی */
 
 const parts=
 pendingVote.split("_");
@@ -974,9 +989,16 @@ return;
 }
 
 
+/* ورود عادی → صفحه اصلی */
+
+showPage("homePage");
+
 loadAccount();
 
 }
+
+
+
 
 
 /* ================= LOAD ACCOUNT ================= */
