@@ -87,6 +87,9 @@ transition:0.2s;
 background:#e4e7ea;
 }
 
+
+/* ================= POLL OPTIONS ================= */
+
 .poll-option{
 display:block;
 width:100%;
@@ -97,16 +100,50 @@ border:1px solid #ddd;
 border-radius:12px;
 background:#fff;
 cursor:pointer;
+
+/* جلوگیری از انتخاب و کپی متن */
+-webkit-user-select:none;
+user-select:none;
+
+-webkit-touch-callout:none;
+-webkit-user-drag:none;
 }
 
 .poll-option input{
 margin-left:8px;
+cursor:pointer;
+pointer-events:auto;
+}
+
+.poll-option-text{
+-webkit-user-select:none;
+user-select:none;
+
+-webkit-touch-callout:none;
+
+pointer-events:none;
+}
+
+.poll-question{
+-webkit-user-select:none;
+user-select:none;
+
+-webkit-touch-callout:none;
 }
 
 .poll-option.disabled{
 opacity:0.55;
 cursor:not-allowed;
+pointer-events:none;
 }
+
+.poll-option.disabled input{
+pointer-events:none;
+cursor:not-allowed;
+}
+
+
+/* ================= BUTTONS ================= */
 
 button{
 border:none;
@@ -205,6 +242,12 @@ color:#555;
 
 .result{
 margin-top:15px;
+
+/* جلوگیری از کپی نتایج */
+-webkit-user-select:none;
+user-select:none;
+
+-webkit-touch-callout:none;
 }
 
 .result-row{
@@ -659,6 +702,65 @@ button.classList.remove("pressed");
 );
 
 
+/* ================= POLL TEXT COPY PROTECTION ================= */
+
+/* جلوگیری از انتخاب متن در قسمت رأی */
+
+document.addEventListener(
+"selectstart",
+function(event){
+
+if(
+event.target.closest("#pollList") ||
+event.target.closest("#categoryTitle")
+){
+
+event.preventDefault();
+
+}
+
+}
+);
+
+
+/* جلوگیری از منوی کپی در آیفون */
+
+document.addEventListener(
+"contextmenu",
+function(event){
+
+if(
+event.target.closest("#pollList") ||
+event.target.closest("#categoryTitle")
+){
+
+event.preventDefault();
+
+}
+
+}
+);
+
+
+/* جلوگیری از کشیدن متن */
+
+document.addEventListener(
+"dragstart",
+function(event){
+
+if(
+event.target.closest("#pollList") ||
+event.target.closest("#categoryTitle")
+){
+
+event.preventDefault();
+
+}
+
+}
+);
+
+
 /* ================= REGISTER ================= */
 
 function showRegister(){
@@ -957,7 +1059,9 @@ let html=`
 
 <div>
 
-<h3>${poll.question}</h3>
+<h3 class="poll-question">
+${poll.question}
+</h3>
 
 `;
 
@@ -966,8 +1070,9 @@ poll.options.forEach((option,i)=>{
 
 html+=`
 
-<label class="poll-option
-${voted ? "disabled":""}">
+<label
+class="poll-option ${voted ? "disabled":""}"
+${voted ? 'aria-disabled="true"' : ''}>
 
 <input
 type="radio"
@@ -975,7 +1080,9 @@ name="${pollId}"
 value="${i}"
 ${voted ? "disabled":""}>
 
+<span class="poll-option-text">
 ${option}
+</span>
 
 </label>
 
