@@ -35,14 +35,9 @@ top:0;
 z-index:10;
 }
 
-header h1{
-font-size:25px;
-}
-
 header p{
 font-size:13px;
 color:#777;
-margin-top:5px;
 }
 
 .container{
@@ -454,15 +449,6 @@ onclick="logout()">
 
 </div>
 
-<button
-class="primary-btn"
-onclick="logout()">
-
-خروج از حساب
-
-</button>
-
-</div>
 
 <div
 id="voteHistory"
@@ -589,6 +575,7 @@ class="message">
 
 
 <script>
+
 /* ================= REGISTER ================= */
 
 function showRegister(){
@@ -619,12 +606,9 @@ document.getElementById("registerPassword2")
 const message =
 document.getElementById("registerMessage");
 
-
 message.style.display="none";
 message.classList.remove("error");
 
-
-/* بررسی ایمیل */
 
 if(!email){
 
@@ -638,8 +622,6 @@ return;
 }
 
 
-/* بررسی رمز */
-
 if(!password){
 
 message.innerText =
@@ -652,8 +634,6 @@ return;
 }
 
 
-/* حداقل طول رمز */
-
 if(password.length < 6){
 
 message.innerText =
@@ -665,8 +645,6 @@ return;
 
 }
 
-
-/* بررسی تکرار رمز */
 
 if(password !== password2){
 
@@ -681,8 +659,6 @@ return;
 
 }
 
-
-/* بررسی حساب قبلی */
 
 const registeredEmail =
 localStorage.getItem("registeredEmail");
@@ -705,8 +681,6 @@ return;
 }
 
 
-/* ذخیره موقت حساب */
-
 localStorage.setItem(
 "registeredEmail",
 email
@@ -717,24 +691,17 @@ localStorage.setItem(
 password
 );
 
-
-/* ورود خودکار */
-
 localStorage.setItem(
 "didgahUser",
 email
 );
 
 
-/* پیام موفقیت */
-
 message.innerText =
 "حساب شما با موفقیت ایجاد شد.";
 
 message.style.display="block";
 
-
-/* ورود به حساب */
 
 setTimeout(()=>{
 
@@ -745,6 +712,8 @@ showPage("accountPage");
 },1000);
 
 }
+
+
 /* ================= DATA ================= */
 
 const polls = {
@@ -845,8 +814,21 @@ document.querySelectorAll(".page")
 page.classList.remove("active");
 });
 
-document.getElementById(pageId)
-.classList.add("active");
+const page =
+document.getElementById(pageId);
+
+if(!page)return;
+
+page.classList.add("active");
+
+
+/* ذخیره آخرین صفحه */
+
+localStorage.setItem(
+"lastPage",
+pageId
+);
+
 
 window.scrollTo({
 top:0,
@@ -865,10 +847,20 @@ showPage("pollPage");
 document.getElementById("categoryTitle")
 .innerText=category;
 
+
+/* ذخیره دسته انتخاب‌شده */
+
+localStorage.setItem(
+"lastPollCategory",
+category
+);
+
+
 const pollList=
 document.getElementById("pollList");
 
 pollList.innerHTML="";
+
 
 polls[category].forEach((poll,index)=>{
 
@@ -933,9 +925,13 @@ class="result">
 
 pollList.innerHTML+=html;
 
+
 if(voted){
 
-showResults(pollId,poll.options);
+showResults(
+pollId,
+poll.options
+);
 
 }
 
@@ -1023,6 +1019,7 @@ document.getElementById(
 const pollIndex=
 pollId.split("_")[1];
 
+
 showResults(
 pollId,
 polls[category][pollIndex].options
@@ -1042,6 +1039,7 @@ document.getElementById(
 
 if(!result)return;
 
+
 let selected=
 localStorage.getItem(
 "voted_"+pollId
@@ -1049,17 +1047,21 @@ localStorage.getItem(
 
 if(selected===null)return;
 
+
 let voterCount=1;
+
 
 let percentages=
 options.map(()=>{
 return Math.floor(100/options.length);
 });
 
+
 let remaining=
 100-percentages.reduce(
 (a,b)=>a+b,0
 );
+
 
 percentages[0]+=remaining;
 
@@ -1078,6 +1080,7 @@ result.innerHTML=`
 </strong>
 
 `;
+
 
 options.forEach((option,index)=>{
 
@@ -1113,6 +1116,24 @@ style="width:${percentages[index]}%">
 
 /* ================= ACCOUNT ================= */
 
+function showAccountMessage(text){
+
+const message =
+document.getElementById(
+"accountMessage"
+);
+
+message.innerText=text;
+
+message.classList.remove("error");
+
+message.style.display="block";
+
+}
+
+
+/* ================= LOGIN ================= */
+
 function login(){
 
 const email=
@@ -1126,8 +1147,10 @@ document.getElementById("password")
 const message=
 document.getElementById("accountMessage");
 
+
 message.style.display="none";
 message.classList.remove("error");
+
 
 if(!email || !password){
 
@@ -1140,11 +1163,13 @@ return;
 
 }
 
+
 const registeredEmail=
 localStorage.getItem("registeredEmail");
 
 const registeredPassword=
 localStorage.getItem("registeredPassword");
+
 
 if(
 email !== registeredEmail ||
@@ -1162,24 +1187,30 @@ return;
 
 }
 
+
 localStorage.setItem(
 "didgahUser",
 email
 );
 
+
 loadAccount();
+
 
 const pendingVote=
 localStorage.getItem("pendingVote");
+
 
 if(pendingVote){
 
 localStorage.removeItem("pendingVote");
 
+
 const parts=
 pendingVote.split("_");
 
 const category=parts[0];
+
 
 openPolls(category);
 
@@ -1187,9 +1218,30 @@ return;
 
 }
 
+
 showPage("homePage");
 
 loadAccount();
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+localStorage.removeItem(
+"didgahUser"
+);
+
+localStorage.setItem(
+"lastPage",
+"homePage"
+);
+
+loadAccount();
+
+showPage("homePage");
 
 }
 
@@ -1200,6 +1252,7 @@ function loadAccount(){
 
 const user =
 localStorage.getItem("didgahUser");
+
 
 if(!user){
 
@@ -1215,6 +1268,7 @@ return;
 
 }
 
+
 document.getElementById(
 "loggedOut"
 ).style.display="none";
@@ -1223,11 +1277,16 @@ document.getElementById(
 "loggedIn"
 ).style.display="block";
 
+
 document.getElementById(
 "userEmail"
 ).innerText=user;
 
+
+/* شمارش رأی‌ها */
+
 let count=0;
+
 
 Object.keys(localStorage)
 .forEach(key=>{
@@ -1238,14 +1297,19 @@ count++;
 
 });
 
+
 document.getElementById(
 "voteCount"
 ).innerText=count;
+
+
+/* تاریخچه رأی‌ها */
 
 const history =
 document.getElementById("voteHistory");
 
 history.innerHTML="";
+
 
 if(count===0){
 
@@ -1263,6 +1327,7 @@ return;
 
 }
 
+
 history.innerHTML=`
 
 <strong>
@@ -1271,6 +1336,7 @@ history.innerHTML=`
 
 `;
 
+
 Object.keys(localStorage)
 .forEach(key=>{
 
@@ -1278,17 +1344,21 @@ if(!key.startsWith("voted_")){
 return;
 }
 
+
 const pollId =
 key.replace("voted_","");
 
+
 const parts =
 pollId.split("_");
+
 
 const category =
 parts[0];
 
 const pollIndex =
 parseInt(parts[1]);
+
 
 if(
 !polls[category] ||
@@ -1297,16 +1367,20 @@ if(
 return;
 }
 
+
 const poll =
 polls[category][pollIndex];
+
 
 const selectedIndex =
 parseInt(
 localStorage.getItem(key)
 );
 
+
 const selectedOption =
 poll.options[selectedIndex];
+
 
 history.innerHTML+=`
 
@@ -1352,11 +1426,14 @@ const email =
 document.getElementById("forgotEmail")
 .value.trim();
 
+
 const message =
 document.getElementById("forgotMessage");
 
+
 message.style.display="none";
 message.classList.remove("error");
+
 
 if(!email){
 
@@ -1369,8 +1446,10 @@ return;
 
 }
 
+
 const registeredEmail =
 localStorage.getItem("registeredEmail");
+
 
 if(email !== registeredEmail){
 
@@ -1385,11 +1464,6 @@ return;
 
 }
 
-/*
-فعلاً چون دیتابیس و ارسال ایمیل
-را بعداً با Supabase انجام می‌دهیم،
-در نسخه آزمایشی فقط پیام موفقیت نمایش می‌دهیم.
-*/
 
 message.innerText =
 "درخواست بازیابی رمز عبور با موفقیت ثبت شد.";
@@ -1399,9 +1473,58 @@ message.style.display="block";
 }
 
 
+/* ================= RESTORE PAGE ================= */
+
+function restoreLastPage(){
+
+const lastPage =
+localStorage.getItem("lastPage");
+
+
+if(!lastPage ||
+!document.getElementById(lastPage)){
+
+showPage("homePage");
+
+return;
+
+}
+
+
+/* اگر آخرین صفحه نظرسنجی بود */
+
+if(lastPage==="pollPage"){
+
+const category =
+localStorage.getItem(
+"lastPollCategory"
+);
+
+
+if(category &&
+polls[category]){
+
+openPolls(category);
+
+return;
+
+}
+
+}
+
+
+/* سایر صفحات */
+
+showPage(lastPage);
+
+}
+
+
 /* ================= START ================= */
 
 loadAccount();
+
+restoreLastPage();
 
 </script>
 
