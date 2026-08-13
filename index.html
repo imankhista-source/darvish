@@ -114,26 +114,21 @@ border-radius:12px;
 padding:13px 20px;
 font-size:15px;
 cursor:pointer;
-transition:0.1;
 
 -webkit-user-select:none;
 user-select:none;
 
 -webkit-touch-callout:none;
+
+transition:transform 0.1s;
 }
 
-button:active{
+button.pressed{
+background:#225A45 !important;
+color:#fff !important;
 transform:scale(0.97);
-background:#225A45;
-color:#fff;
 }
 
-/* حالت لمس / کلیک دکمه */
-
-button:active{
-transform:scale(0.97);
-filter:brightness(0.88);
-}
 .primary-btn{
 background:#222;
 color:#fff;
@@ -594,6 +589,76 @@ class="message">
 
 <script>
 
+/* ================= BUTTON TOUCH EFFECT ================= */
+
+document.addEventListener(
+"pointerdown",
+function(event){
+
+const button =
+event.target.closest("button");
+
+if(button){
+
+button.classList.add("pressed");
+
+}
+
+}
+);
+
+
+document.addEventListener(
+"pointerup",
+function(event){
+
+const button =
+event.target.closest("button");
+
+if(button){
+
+button.classList.remove("pressed");
+
+}
+
+}
+);
+
+
+document.addEventListener(
+"pointercancel",
+function(event){
+
+const button =
+event.target.closest("button");
+
+if(button){
+
+button.classList.remove("pressed");
+
+}
+
+}
+);
+
+
+document.addEventListener(
+"pointerleave",
+function(event){
+
+const button =
+event.target.closest("button");
+
+if(button){
+
+button.classList.remove("pressed");
+
+}
+
+}
+);
+
+
 /* ================= REGISTER ================= */
 
 function showRegister(){
@@ -840,8 +905,6 @@ if(!page)return;
 page.classList.add("active");
 
 
-/* ذخیره آخرین صفحه */
-
 localStorage.setItem(
 "lastPage",
 pageId
@@ -862,11 +925,10 @@ function openPolls(category){
 
 showPage("pollPage");
 
+
 document.getElementById("categoryTitle")
 .innerText=category;
 
-
-/* ذخیره دسته انتخاب‌شده */
 
 localStorage.setItem(
 "lastPollCategory",
@@ -874,7 +936,7 @@ category
 );
 
 
-const pollList=
+const pollList =
 document.getElementById("pollList");
 
 pollList.innerHTML="";
@@ -882,11 +944,14 @@ pollList.innerHTML="";
 
 polls[category].forEach((poll,index)=>{
 
-const pollId=
+const pollId =
 category+"_"+index;
 
-const voted=
-localStorage.getItem("voted_"+pollId);
+const voted =
+localStorage.getItem(
+"voted_"+pollId
+);
+
 
 let html=`
 
@@ -895,6 +960,7 @@ let html=`
 <h3>${poll.question}</h3>
 
 `;
+
 
 poll.options.forEach((option,i)=>{
 
@@ -941,6 +1007,7 @@ class="result">
 
 `;
 
+
 pollList.innerHTML+=html;
 
 
@@ -965,6 +1032,7 @@ function submitVote(pollId){
 const user =
 localStorage.getItem("didgahUser");
 
+
 if(!user){
 
 localStorage.setItem(
@@ -983,10 +1051,11 @@ return;
 }
 
 
-const selected=
+const selected =
 document.querySelector(
 `input[name="${pollId}"]:checked`
 );
+
 
 if(!selected){
 
@@ -1018,23 +1087,25 @@ input
 });
 
 
-const button=
+const button =
 document.getElementById(
 "voteBtn_"+pollId
 );
 
+
 button.disabled=true;
 
-button.innerText=
+button.innerText =
 "رأی ثبت شده است";
 
 
-const category=
+const category =
 document.getElementById(
 "categoryTitle"
 ).innerText;
 
-const pollIndex=
+
+const pollIndex =
 pollId.split("_")[1];
 
 
@@ -1048,20 +1119,25 @@ polls[category][pollIndex].options
 
 /* ================= RESULTS ================= */
 
-function showResults(pollId,options){
+function showResults(
+pollId,
+options
+){
 
-const result=
+const result =
 document.getElementById(
 "result_"+pollId
 );
 
+
 if(!result)return;
 
 
-let selected=
+const selected =
 localStorage.getItem(
 "voted_"+pollId
 );
+
 
 if(selected===null)return;
 
@@ -1069,13 +1145,17 @@ if(selected===null)return;
 let voterCount=1;
 
 
-let percentages=
+let percentages =
 options.map(()=>{
-return Math.floor(100/options.length);
+
+return Math.floor(
+100/options.length
+);
+
 });
 
 
-let remaining=
+let remaining =
 100-percentages.reduce(
 (a,b)=>a+b,0
 );
@@ -1093,14 +1173,18 @@ result.innerHTML=`
 
 </div>
 
-<strong style="display:block;margin-top:15px;">
+<strong
+style="display:block;margin-top:15px;">
+
 نتایج
+
 </strong>
 
 `;
 
 
-options.forEach((option,index)=>{
+options.forEach(
+(option,index)=>{
 
 result.innerHTML+=`
 
@@ -1110,7 +1194,9 @@ result.innerHTML+=`
 
 <span>${option}</span>
 
-<span>${percentages[index]}%</span>
+<span>
+${percentages[index]}%
+</span>
 
 </div>
 
@@ -1132,7 +1218,7 @@ style="width:${percentages[index]}%">
 }
 
 
-/* ================= ACCOUNT ================= */
+/* ================= ACCOUNT MESSAGE ================= */
 
 function showAccountMessage(text){
 
@@ -1154,16 +1240,19 @@ message.style.display="block";
 
 function login(){
 
-const email=
+const email =
 document.getElementById("email")
 .value.trim();
 
-const password=
+const password =
 document.getElementById("password")
 .value;
 
-const message=
-document.getElementById("accountMessage");
+
+const message =
+document.getElementById(
+"accountMessage"
+);
 
 
 message.style.display="none";
@@ -1172,7 +1261,7 @@ message.classList.remove("error");
 
 if(!email || !password){
 
-message.innerText=
+message.innerText =
 "لطفاً ایمیل و رمز عبور را وارد کنید.";
 
 message.style.display="block";
@@ -1182,11 +1271,16 @@ return;
 }
 
 
-const registeredEmail=
-localStorage.getItem("registeredEmail");
+const registeredEmail =
+localStorage.getItem(
+"registeredEmail"
+);
 
-const registeredPassword=
-localStorage.getItem("registeredPassword");
+
+const registeredPassword =
+localStorage.getItem(
+"registeredPassword"
+);
 
 
 if(
@@ -1194,7 +1288,7 @@ email !== registeredEmail ||
 password !== registeredPassword
 ){
 
-message.innerText=
+message.innerText =
 "ایمیل یا رمز عبور اشتباه است.";
 
 message.classList.add("error");
@@ -1215,19 +1309,25 @@ email
 loadAccount();
 
 
-const pendingVote=
-localStorage.getItem("pendingVote");
+const pendingVote =
+localStorage.getItem(
+"pendingVote"
+);
 
 
 if(pendingVote){
 
-localStorage.removeItem("pendingVote");
+localStorage.removeItem(
+"pendingVote"
+);
 
 
-const parts=
+const parts =
 pendingVote.split("_");
 
-const category=parts[0];
+
+const category =
+parts[0];
 
 
 openPolls(category);
@@ -1252,10 +1352,12 @@ localStorage.removeItem(
 "didgahUser"
 );
 
+
 localStorage.setItem(
 "lastPage",
 "homePage"
 );
+
 
 loadAccount();
 
@@ -1269,7 +1371,9 @@ showPage("homePage");
 function loadAccount(){
 
 const user =
-localStorage.getItem("didgahUser");
+localStorage.getItem(
+"didgahUser"
+);
 
 
 if(!user){
@@ -1310,7 +1414,9 @@ Object.keys(localStorage)
 .forEach(key=>{
 
 if(key.startsWith("voted_")){
+
 count++;
+
 }
 
 });
@@ -1324,7 +1430,10 @@ document.getElementById(
 /* تاریخچه رأی‌ها */
 
 const history =
-document.getElementById("voteHistory");
+document.getElementById(
+"voteHistory"
+);
+
 
 history.innerHTML="";
 
@@ -1359,12 +1468,17 @@ Object.keys(localStorage)
 .forEach(key=>{
 
 if(!key.startsWith("voted_")){
+
 return;
+
 }
 
 
 const pollId =
-key.replace("voted_","");
+key.replace(
+"voted_",
+""
+);
 
 
 const parts =
@@ -1374,6 +1488,7 @@ pollId.split("_");
 const category =
 parts[0];
 
+
 const pollIndex =
 parseInt(parts[1]);
 
@@ -1382,7 +1497,9 @@ if(
 !polls[category] ||
 !polls[category][pollIndex]
 ){
+
 return;
+
 }
 
 
@@ -1406,13 +1523,15 @@ history.innerHTML+=`
 class="status"
 style="margin-top:10px;">
 
-<div style="font-weight:bold;margin-bottom:8px;">
+<div
+style="font-weight:bold;margin-bottom:8px;">
 
 ${category}
 
 </div>
 
-<div style="font-size:14px;margin-bottom:8px;">
+<div
+style="font-size:14px;margin-bottom:8px;">
 
 ${poll.question}
 
@@ -1421,6 +1540,7 @@ ${poll.question}
 <div class="small">
 
 انتخاب شما:
+
 <strong>
 ${selectedOption}
 </strong>
@@ -1441,12 +1561,16 @@ ${selectedOption}
 function forgotPassword(){
 
 const email =
-document.getElementById("forgotEmail")
+document.getElementById(
+"forgotEmail"
+)
 .value.trim();
 
 
 const message =
-document.getElementById("forgotMessage");
+document.getElementById(
+"forgotMessage"
+);
 
 
 message.style.display="none";
@@ -1466,7 +1590,9 @@ return;
 
 
 const registeredEmail =
-localStorage.getItem("registeredEmail");
+localStorage.getItem(
+"registeredEmail"
+);
 
 
 if(email !== registeredEmail){
@@ -1496,11 +1622,15 @@ message.style.display="block";
 function restoreLastPage(){
 
 const lastPage =
-localStorage.getItem("lastPage");
+localStorage.getItem(
+"lastPage"
+);
 
 
-if(!lastPage ||
-!document.getElementById(lastPage)){
+if(
+!lastPage ||
+!document.getElementById(lastPage)
+){
 
 showPage("homePage");
 
@@ -1519,8 +1649,10 @@ localStorage.getItem(
 );
 
 
-if(category &&
-polls[category]){
+if(
+category &&
+polls[category]
+){
 
 openPolls(category);
 
