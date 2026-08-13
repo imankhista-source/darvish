@@ -411,7 +411,7 @@ onclick="showRegister()">
 
 <button
 class="link-btn"
-onclick="forgotPassword()">
+onclick="showPage('forgotPage')">
 
 فراموشی رمز عبور
 
@@ -448,10 +448,12 @@ onclick="logout()">
 </button>
 
 </div>
+
 <div
 id="voteHistory"
 style="margin-top:15px;">
 </div>
+
 <div
 id="accountMessage"
 class="message">
@@ -516,7 +518,53 @@ class="message">
 
 </section>
 
+
+<!-- ================= FORGOT PASSWORD ================= -->
+
+<section id="forgotPage" class="page">
+
+<button
+class="back-btn"
+onclick="showPage('accountPage')">
+
+بازگشت
+
+</button>
+
+<div class="card">
+
+<h2>فراموشی رمز عبور</h2>
+
+<p class="small">
+ایمیل حساب خود را وارد کنید تا مراحل بازیابی رمز عبور برای شما ارسال شود.
+</p>
+
+<label>ایمیل</label>
+
+<input
+type="email"
+id="forgotEmail"
+placeholder="ایمیل خود را وارد کنید">
+
+<button
+class="primary-btn"
+onclick="forgotPassword()">
+
+بازیابی رمز عبور
+
+</button>
+
+<div
+id="forgotMessage"
+class="message">
 </div>
+
+</div>
+
+</section>
+
+</div>
+
 
 <footer>
 
@@ -894,6 +942,7 @@ style="width:${percentages[index]}%">
 
 
 /* ================= ACCOUNT ================= */
+
 function login(){
 
 const email=
@@ -904,17 +953,11 @@ const password=
 document.getElementById("password")
 .value;
 
-
-/* پاک کردن پیام قبلی */
-
 const message=
 document.getElementById("accountMessage");
 
 message.style.display="none";
 message.classList.remove("error");
-
-
-/* بررسی خالی بودن */
 
 if(!email || !password){
 
@@ -927,17 +970,11 @@ return;
 
 }
 
-
-/* اطلاعات حساب ثبت‌شده */
-
 const registeredEmail=
 localStorage.getItem("registeredEmail");
 
 const registeredPassword=
 localStorage.getItem("registeredPassword");
-
-
-/* بررسی ایمیل و رمز عبور */
 
 if(
 email !== registeredEmail ||
@@ -955,30 +992,19 @@ return;
 
 }
 
-
-/* ================= ورود موفق ================= */
-
-
-/* ذخیره کاربر واردشده */
-
 localStorage.setItem(
 "didgahUser",
 email
 );
-loadAccount();
 
-/* بررسی رأی در انتظار */
+loadAccount();
 
 const pendingVote=
 localStorage.getItem("pendingVote");
 
-
 if(pendingVote){
 
 localStorage.removeItem("pendingVote");
-
-
-/* بازگشت به نظرسنجی */
 
 const parts=
 pendingVote.split("_");
@@ -991,17 +1017,11 @@ return;
 
 }
 
-
-/* ورود عادی → صفحه اصلی */
-
 showPage("homePage");
 
 loadAccount();
 
 }
-
-
-
 
 
 /* ================= LOAD ACCOUNT ================= */
@@ -1025,9 +1045,6 @@ return;
 
 }
 
-
-/* نمایش حساب */
-
 document.getElementById(
 "loggedOut"
 ).style.display="none";
@@ -1039,9 +1056,6 @@ document.getElementById(
 document.getElementById(
 "userEmail"
 ).innerText=user;
-
-
-/* شمارش رأی‌ها */
 
 let count=0;
 
@@ -1058,14 +1072,10 @@ document.getElementById(
 "voteCount"
 ).innerText=count;
 
-
-/* ================= تاریخچه رأی‌ها ================= */
-
 const history =
 document.getElementById("voteHistory");
 
 history.innerHTML="";
-
 
 if(count===0){
 
@@ -1083,7 +1093,6 @@ return;
 
 }
 
-
 history.innerHTML=`
 
 <strong>
@@ -1092,9 +1101,6 @@ history.innerHTML=`
 
 `;
 
-
-/* پیدا کردن رأی‌ها */
-
 Object.keys(localStorage)
 .forEach(key=>{
 
@@ -1102,21 +1108,17 @@ if(!key.startsWith("voted_")){
 return;
 }
 
-
 const pollId =
 key.replace("voted_","");
 
-
 const parts =
 pollId.split("_");
-
 
 const category =
 parts[0];
 
 const pollIndex =
 parseInt(parts[1]);
-
 
 if(
 !polls[category] ||
@@ -1125,20 +1127,16 @@ if(
 return;
 }
 
-
 const poll =
 polls[category][pollIndex];
-
 
 const selectedIndex =
 parseInt(
 localStorage.getItem(key)
 );
 
-
 const selectedOption =
 poll.options[selectedIndex];
-
 
 history.innerHTML+=`
 
@@ -1172,6 +1170,61 @@ ${selectedOption}
 `;
 
 });
+
+}
+
+
+/* ================= FORGOT PASSWORD ================= */
+
+function forgotPassword(){
+
+const email =
+document.getElementById("forgotEmail")
+.value.trim();
+
+const message =
+document.getElementById("forgotMessage");
+
+message.style.display="none";
+message.classList.remove("error");
+
+if(!email){
+
+message.innerText =
+"لطفاً ایمیل خود را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+const registeredEmail =
+localStorage.getItem("registeredEmail");
+
+if(email !== registeredEmail){
+
+message.innerText =
+"حسابی با این ایمیل پیدا نشد.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+/*
+فعلاً چون دیتابیس و ارسال ایمیل
+را بعداً با Supabase انجام می‌دهیم،
+در نسخه آزمایشی فقط پیام موفقیت نمایش می‌دهیم.
+*/
+
+message.innerText =
+"درخواست بازیابی رمز عبور با موفقیت ثبت شد.";
+
+message.style.display="block";
 
 }
 
