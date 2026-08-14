@@ -83,12 +83,26 @@ cursor:pointer;
 transition:0.2s;
 }
 
-.category:hover{
-background:#e4e7ea;
+
+/* ================= POLL ================= */
+
+.poll-box{
+margin-top:20px;
+}
+
+.poll-question{
+font-size:17px;
+line-height:1.8;
+margin-bottom:14px;
+
+-webkit-user-select:none;
+user-select:none;
+
+-webkit-touch-callout:none;
 }
 
 
-/* ================= POLL OPTIONS ================= */
+/* گزینه قبل از رأی */
 
 .poll-option{
 display:block;
@@ -101,18 +115,22 @@ border-radius:12px;
 background:#fff;
 cursor:pointer;
 
-/* جلوگیری از انتخاب و کپی متن */
 -webkit-user-select:none;
 user-select:none;
 
 -webkit-touch-callout:none;
 -webkit-user-drag:none;
+
+transition:0.2s;
+}
+
+.poll-option:active{
+transform:scale(0.98);
 }
 
 .poll-option input{
 margin-left:8px;
 cursor:pointer;
-pointer-events:auto;
 }
 
 .poll-option-text{
@@ -124,22 +142,68 @@ user-select:none;
 pointer-events:none;
 }
 
-.poll-question{
+
+/* بعد از رأی */
+
+.poll-results{
+margin-top:10px;
+}
+
+.result-option{
+position:relative;
+width:100%;
+height:50px;
+margin:10px 0;
+border:1px solid #ddd;
+border-radius:12px;
+background:#fff;
+overflow:hidden;
+
+direction:rtl;
+
 -webkit-user-select:none;
 user-select:none;
 
 -webkit-touch-callout:none;
 }
 
-.poll-option.disabled{
-opacity:0.55;
-cursor:not-allowed;
-pointer-events:none;
+.result-fill{
+position:absolute;
+left:0;
+top:0;
+height:100%;
+background:#225A45;
+width:0%;
+
+transition:width 0.7s ease;
+
+direction:ltr;
 }
 
-.poll-option.disabled input{
-pointer-events:none;
-cursor:not-allowed;
+.result-content{
+position:relative;
+z-index:2;
+
+height:100%;
+width:100%;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
+padding:0 14px;
+
+font-size:15px;
+font-weight:bold;
+}
+
+.result-option .result-text{
+text-align:right;
+}
+
+.result-option .result-percent{
+text-align:left;
+direction:ltr;
 }
 
 
@@ -231,53 +295,6 @@ background:#fff0f0;
 color:#d00000;
 }
 
-.voter-count{
-margin-top:10px;
-padding:10px;
-background:#f1f3f5;
-border-radius:10px;
-font-size:14px;
-color:#555;
-}
-
-.result{
-margin-top:15px;
-
-/* جلوگیری از کپی نتایج */
--webkit-user-select:none;
-user-select:none;
-
--webkit-touch-callout:none;
-}
-
-.result-row{
-margin:12px 0;
-}
-
-.result-label{
-display:flex;
-justify-content:space-between;
-font-size:14px;
-margin-bottom:5px;
-}
-
-.bar{
-height:10px;
-background:#e9ecef;
-border-radius:10px;
-overflow:hidden;
-}
-
-.bar-fill{
-height:100%;
-background:#555;
-width:0%;
-transition:0.4s;
-direction:ltr;
-margin-right:auto;
-margin-left:0;
-}
-
 .account-info{
 line-height:2;
 }
@@ -291,6 +308,26 @@ margin-top:10px;
 
 .small{
 font-size:13px;
+color:#777;
+}
+
+.home-poll{
+padding:15px;
+margin-top:12px;
+background:#f8f9fa;
+border-radius:12px;
+border:1px solid #eee;
+}
+
+.home-poll-title{
+font-size:15px;
+font-weight:bold;
+line-height:1.7;
+margin-bottom:8px;
+}
+
+.home-poll-type{
+font-size:12px;
 color:#777;
 }
 
@@ -314,6 +351,7 @@ color:#888;
 </header>
 
 <div class="container">
+
 
 <!-- ================= HOME ================= -->
 
@@ -363,6 +401,54 @@ onclick="openPolls('علم')">
 </div>
 
 </div>
+
+
+<!-- نظرسنجی‌های نمونه -->
+
+<div class="card">
+
+<h2>نظرسنجی‌های جدید</h2>
+
+<div class="home-poll">
+
+<div class="home-poll-title">
+آیا ورزش روزانه را برای سلامت ضروری می‌دانید؟
+</div>
+
+<div class="home-poll-type">
+نظرسنجی دو گزینه‌ای
+</div>
+
+</div>
+
+
+<div class="home-poll">
+
+<div class="home-poll-title">
+بهترین روش حمل‌ونقل شهری کدام است؟
+</div>
+
+<div class="home-poll-type">
+نظرسنجی چهار گزینه‌ای
+</div>
+
+</div>
+
+
+<div class="home-poll">
+
+<div class="home-poll-title">
+کدام عامل بیشترین تأثیر را در آینده کشور دارد؟
+</div>
+
+<div class="home-poll-type">
+نظرسنجی پنج گزینه‌ای
+</div>
+
+</div>
+
+</div>
+
 
 <div class="card">
 
@@ -632,6 +718,7 @@ class="message">
 
 <script>
 
+
 /* ================= BUTTON TOUCH EFFECT ================= */
 
 document.addEventListener(
@@ -685,26 +772,7 @@ button.classList.remove("pressed");
 );
 
 
-document.addEventListener(
-"pointerleave",
-function(event){
-
-const button =
-event.target.closest("button");
-
-if(button){
-
-button.classList.remove("pressed");
-
-}
-
-}
-);
-
-
 /* ================= POLL TEXT COPY PROTECTION ================= */
-
-/* جلوگیری از انتخاب متن در قسمت رأی */
 
 document.addEventListener(
 "selectstart",
@@ -723,8 +791,6 @@ event.preventDefault();
 );
 
 
-/* جلوگیری از منوی کپی در آیفون */
-
 document.addEventListener(
 "contextmenu",
 function(event){
@@ -741,8 +807,6 @@ event.preventDefault();
 }
 );
 
-
-/* جلوگیری از کشیدن متن */
 
 document.addEventListener(
 "dragstart",
@@ -903,88 +967,424 @@ showPage("accountPage");
 
 const polls = {
 
+
 "ورزش":[
+
+{
+question:"آیا ورزش روزانه را برای سلامت ضروری می‌دانید؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+72,
+28
+]
+
+},
+
 {
 question:"بهترین ورزش برای افزایش سلامت عمومی چیست؟",
+
 options:[
 "پیاده‌روی",
 "شنا",
 "دویدن",
 "دوچرخه‌سواری"
-]
-}
 ],
 
+demoVotes:[
+45,
+30,
+15,
+10
+]
+
+},
+
+{
+question:"بهترین زمان برای ورزش کردن کدام است؟",
+
+options:[
+"صبح",
+"ظهر",
+"عصر",
+"شب",
+"فرقی ندارد"
+],
+
+demoVotes:[
+20,
+8,
+42,
+15,
+15
+]
+
+}
+
+],
+
+
 "فرهنگ":[
+
+{
+question:"آیا مطالعه کتاب را برای رشد فکری ضروری می‌دانید؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+76,
+24
+]
+
+},
+
 {
 question:"کدام مورد بیشترین نقش را در حفظ فرهنگ دارد؟",
+
 options:[
 "زبان",
 "هنر",
 "کتاب",
 "آداب و رسوم"
-]
-}
 ],
 
+demoVotes:[
+35,
+20,
+15,
+30
+]
+
+},
+
+{
+question:"کدام ابزار فرهنگی تأثیر بیشتری بر نسل جدید دارد؟",
+
+options:[
+"کتاب",
+"سینما",
+"موسیقی",
+"شبکه‌های اجتماعی",
+"تئاتر"
+],
+
+demoVotes:[
+12,
+18,
+25,
+35,
+10
+]
+
+}
+
+],
+
+
 "اقتصاد":[
+
+{
+question:"آیا تولید داخلی می‌تواند باعث رشد اقتصادی شود؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+68,
+32
+]
+
+},
+
 {
 question:"مهم‌ترین عامل رشد اقتصادی چیست؟",
+
 options:[
 "تولید",
 "سرمایه‌گذاری",
 "صادرات",
 "فناوری"
-]
-}
 ],
 
+demoVotes:[
+35,
+25,
+15,
+25
+]
+
+},
+
+{
+question:"کدام عامل بیشترین تأثیر را بر اقتصاد دارد؟",
+
+options:[
+"تولید",
+"اشتغال",
+"سرمایه‌گذاری",
+"صادرات",
+"فناوری"
+],
+
+demoVotes:[
+28,
+22,
+20,
+12,
+18
+]
+
+}
+
+],
+
+
 "سیاست":[
+
+{
+question:"آیا مشارکت مردم در تصمیم‌گیری‌های اجتماعی مهم است؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+82,
+18
+]
+
+},
+
 {
 question:"کدام عامل بیشترین نقش را در مشارکت اجتماعی دارد؟",
+
 options:[
 "آگاهی",
 "اعتماد",
 "آموزش",
 "رسانه"
-]
-}
 ],
 
+demoVotes:[
+30,
+28,
+20,
+22
+]
+
+},
+
+{
+question:"مهم‌ترین عامل برای افزایش مشارکت اجتماعی چیست؟",
+
+options:[
+"آگاهی",
+"اعتماد",
+"آموزش",
+"رسانه",
+"قانون"
+],
+
+demoVotes:[
+25,
+30,
+20,
+15,
+10
+]
+
+}
+
+],
+
+
 "طبیعت":[
+
+{
+question:"آیا حفاظت از طبیعت وظیفه همه مردم است؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+88,
+12
+]
+
+},
+
 {
 question:"مهم‌ترین اقدام برای حفاظت از طبیعت چیست؟",
+
 options:[
 "کاهش مصرف",
 "بازیافت",
 "کاشت درخت",
 "حفاظت از آب"
-]
-}
 ],
 
+demoVotes:[
+20,
+25,
+30,
+25
+]
+
+},
+
+{
+question:"کدام اقدام بیشترین تأثیر را بر محیط زیست دارد؟",
+
+options:[
+"کاهش مصرف آب",
+"کاهش مصرف انرژی",
+"بازیافت",
+"کاشت درخت",
+"کاهش پلاستیک"
+],
+
+demoVotes:[
+18,
+22,
+20,
+25,
+15
+]
+
+}
+
+],
+
+
 "هنر":[
+
+{
+question:"آیا هنر می‌تواند بر جامعه تأثیرگذار باشد؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+85,
+15
+]
+
+},
+
 {
 question:"کدام هنر بیشترین تأثیر را بر جامعه دارد؟",
+
 options:[
 "سینما",
 "موسیقی",
 "نقاشی",
 "ادبیات"
-]
-}
 ],
 
+demoVotes:[
+35,
+30,
+15,
+20
+]
+
+},
+
+{
+question:"کدام هنر برای بیان احساسات مناسب‌تر است؟",
+
+options:[
+"موسیقی",
+"سینما",
+"نقاشی",
+"ادبیات",
+"تئاتر"
+],
+
+demoVotes:[
+30,
+20,
+18,
+17,
+15
+]
+
+}
+
+],
+
+
 "علم":[
+
+{
+question:"آیا سرمایه‌گذاری در علم برای آینده ضروری است؟",
+
+options:[
+"بله",
+"خیر"
+],
+
+demoVotes:[
+91,
+9
+]
+
+},
+
 {
 question:"مهم‌ترین عامل پیشرفت علمی چیست؟",
+
 options:[
 "آموزش",
 "پژوهش",
 "سرمایه‌گذاری",
 "همکاری"
+],
+
+demoVotes:[
+25,
+35,
+20,
+20
 ]
+
+},
+
+{
+question:"کدام عامل بیشترین تأثیر را بر پیشرفت علمی دارد؟",
+
+options:[
+"آموزش",
+"پژوهش",
+"فناوری",
+"سرمایه‌گذاری",
+"همکاری"
+],
+
+demoVotes:[
+22,
+30,
+18,
+15,
+15
+]
+
 }
+
 ]
 
 };
@@ -1057,28 +1457,44 @@ localStorage.getItem(
 
 let html=`
 
-<div>
+<div class="poll-box">
 
 <h3 class="poll-question">
 ${poll.question}
 </h3>
+`;
+
+
+/* اگر قبلاً رأی داده شده */
+
+if(voted !== null){
+
+html+=`
+
+<div
+class="poll-results"
+id="result_${pollId}">
+</div>
 
 `;
 
+}
+
+
+/* اگر هنوز رأی داده نشده */
+
+else{
 
 poll.options.forEach((option,i)=>{
 
 html+=`
 
-<label
-class="poll-option ${voted ? "disabled":""}"
-${voted ? 'aria-disabled="true"' : ''}>
+<label class="poll-option">
 
 <input
 type="radio"
 name="${pollId}"
-value="${i}"
-${voted ? "disabled":""}>
+value="${i}">
 
 <span class="poll-option-text">
 ${option}
@@ -1096,21 +1512,26 @@ html+=`
 <button
 class="primary-btn"
 id="voteBtn_${pollId}"
-onclick="submitVote('${pollId}')"
-${voted ? "disabled":""}>
+onclick="submitVote('${pollId}')">
 
-${voted ? "رأی ثبت شده است" : "ثبت رأی"}
+ثبت رأی
 
 </button>
 
-<div
-id="result_${pollId}"
-class="result">
-</div>
+`;
+
+}
+
+
+html+=`
 
 </div>
 
-<hr style="margin:25px 0;border:none;border-top:1px solid #eee">
+<hr style="
+margin:25px 0;
+border:none;
+border-top:1px solid #eee;
+">
 
 `;
 
@@ -1118,11 +1539,11 @@ class="result">
 pollList.innerHTML+=html;
 
 
-if(voted){
+if(voted !== null){
 
 showResults(
 pollId,
-poll.options
+poll
 );
 
 }
@@ -1179,47 +1600,25 @@ selected.value
 );
 
 
-document
-.querySelectorAll(
-`input[name="${pollId}"]`
-)
-.forEach(input=>{
+/* پیدا کردن دسته و شماره نظرسنجی */
 
-input.disabled=true;
-
-input
-.closest(".poll-option")
-.classList.add("disabled");
-
-});
-
-
-const button =
-document.getElementById(
-"voteBtn_"+pollId
-);
-
-
-button.disabled=true;
-
-button.innerText =
-"رأی ثبت شده است";
-
+const parts =
+pollId.split("_");
 
 const category =
-document.getElementById(
-"categoryTitle"
-).innerText;
-
+parts[0];
 
 const pollIndex =
-pollId.split("_")[1];
+parseInt(parts[1]);
 
 
-showResults(
-pollId,
-polls[category][pollIndex].options
-);
+const poll =
+polls[category][pollIndex];
+
+
+/* نمایش نتیجه */
+
+openPolls(category);
 
 }
 
@@ -1228,7 +1627,7 @@ polls[category][pollIndex].options
 
 function showResults(
 pollId,
-options
+poll
 ){
 
 const result =
@@ -1246,73 +1645,59 @@ localStorage.getItem(
 );
 
 
-if(selected===null)return;
+if(selected === null)return;
 
 
-let voterCount=1;
+/*
+رأی‌های آزمایشی
++ رأی واقعی کاربر
+*/
+
+let votes =
+[...poll.demoVotes];
 
 
-let percentages =
-options.map(()=>{
+votes[selected] =
+votes[selected] + 1;
 
-return Math.floor(
-100/options.length
+
+const total =
+votes.reduce(
+(a,b)=>a+b,
+0
 );
 
-});
+
+result.innerHTML="";
 
 
-let remaining =
-100-percentages.reduce(
-(a,b)=>a+b,0
-);
-
-
-percentages[0]+=remaining;
-
-
-result.innerHTML=`
-
-<div class="voter-count">
-
-👥 تعداد رأی‌دهندگان:
-<strong>${voterCount}</strong>
-
-</div>
-
-<strong
-style="display:block;margin-top:15px;">
-
-نتایج
-
-</strong>
-
-`;
-
-
-options.forEach(
+poll.options.forEach(
 (option,index)=>{
+
+const percentage =
+Math.round(
+(votes[index] / total) * 100
+);
+
 
 result.innerHTML+=`
 
-<div class="result-row">
-
-<div class="result-label">
-
-<span>${option}</span>
-
-<span>
-${percentages[index]}%
-</span>
-
-</div>
-
-<div class="bar">
+<div class="result-option">
 
 <div
-class="bar-fill"
-style="width:${percentages[index]}%">
+class="result-fill"
+style="width:${percentage}%">
 </div>
+
+<div class="result-content">
+
+<span class="result-text">
+${option}
+</span>
+
+<span class="result-percent">
+${percentage}%
+</span>
 
 </div>
 
@@ -1631,14 +2016,18 @@ class="status"
 style="margin-top:10px;">
 
 <div
-style="font-weight:bold;margin-bottom:8px;">
+style="
+font-weight:bold;
+margin-bottom:8px;">
 
 ${category}
 
 </div>
 
 <div
-style="font-size:14px;margin-bottom:8px;">
+style="
+font-size:14px;
+margin-bottom:8px;">
 
 ${poll.question}
 
@@ -1746,8 +2135,6 @@ return;
 }
 
 
-/* اگر آخرین صفحه نظرسنجی بود */
-
 if(lastPage==="pollPage"){
 
 const category =
@@ -1770,11 +2157,10 @@ return;
 }
 
 
-/* سایر صفحات */
-
 showPage(lastPage);
 
 }
+
 
 /* ================= START ================= */
 
