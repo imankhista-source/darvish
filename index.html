@@ -102,7 +102,22 @@ user-select:none;
 }
 
 
-/* گزینه قبل از رأی */
+/* ================= PARTICIPANTS ================= */
+
+.participant-count{
+font-size:13px;
+color:#777;
+margin-bottom:12px;
+padding:0 2px;
+
+-webkit-user-select:none;
+user-select:none;
+
+-webkit-touch-callout:none;
+}
+
+
+/* ================= POLL OPTIONS ================= */
 
 .poll-option{
 display:block;
@@ -141,7 +156,7 @@ pointer-events:none;
 }
 
 
-/* ================= RESULT BAR ================= */
+/* ================= RESULTS ================= */
 
 .poll-results{
 margin-top:10px;
@@ -170,9 +185,6 @@ user-select:none;
 -webkit-touch-callout:none;
 }
 
-
-/* نوار سبز */
-
 .result-fill{
 position:absolute;
 
@@ -189,9 +201,6 @@ transition:width 0.7s ease;
 
 direction:ltr;
 }
-
-
-/* متن روی نوار */
 
 .result-content{
 position:absolute;
@@ -1031,7 +1040,9 @@ question:"آیا ورزش روزانه را برای سلامت ضروری می�
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:128
 
 },
 
@@ -1045,7 +1056,9 @@ options:[
 "شنا",
 "دویدن",
 "دوچرخه‌سواری"
-]
+],
+
+participants:356
 
 },
 
@@ -1060,7 +1073,9 @@ options:[
 "عصر",
 "شب",
 "فرقی ندارد"
-]
+],
+
+participants:721
 
 }
 
@@ -1079,7 +1094,9 @@ question:"آیا مطالعه کتاب را برای رشد فکری ضروری 
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:184
 
 },
 
@@ -1093,7 +1110,9 @@ options:[
 "هنر",
 "کتاب",
 "آداب و رسوم"
-]
+],
+
+participants:432
 
 },
 
@@ -1108,7 +1127,9 @@ options:[
 "موسیقی",
 "شبکه‌های اجتماعی",
 "تئاتر"
-]
+],
+
+participants:965
 
 }
 
@@ -1127,7 +1148,9 @@ question:"آیا تولید داخلی می‌تواند باعث رشد اقت�
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:245
 
 },
 
@@ -1141,7 +1164,9 @@ options:[
 "سرمایه‌گذاری",
 "صادرات",
 "فناوری"
-]
+],
+
+participants:578
 
 },
 
@@ -1156,7 +1181,9 @@ options:[
 "سرمایه‌گذاری",
 "صادرات",
 "فناوری"
-]
+],
+
+participants:1240
 
 }
 
@@ -1175,7 +1202,9 @@ question:"آیا مشارکت مردم در تصمیم‌گیری‌های اج�
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:318
 
 },
 
@@ -1189,7 +1218,9 @@ options:[
 "اعتماد",
 "آموزش",
 "رسانه"
-]
+],
+
+participants:684
 
 },
 
@@ -1204,7 +1235,9 @@ options:[
 "آموزش",
 "رسانه",
 "قانون"
-]
+],
+
+participants:1125
 
 }
 
@@ -1223,7 +1256,9 @@ question:"آیا حفاظت از طبیعت وظیفه همه مردم است؟"
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:274
 
 },
 
@@ -1237,7 +1272,9 @@ options:[
 "بازیافت",
 "کاشت درخت",
 "حفاظت از آب"
-]
+],
+
+participants:512
 
 },
 
@@ -1252,7 +1289,9 @@ options:[
 "بازیافت",
 "کاشت درخت",
 "کاهش پلاستیک"
-]
+],
+
+participants:890
 
 }
 
@@ -1271,7 +1310,9 @@ question:"آیا هنر می‌تواند بر جامعه تأثیرگذار ب�
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:163
 
 },
 
@@ -1285,7 +1326,9 @@ options:[
 "موسیقی",
 "نقاشی",
 "ادبیات"
-]
+],
+
+participants:407
 
 },
 
@@ -1300,7 +1343,9 @@ options:[
 "نقاشی",
 "ادبیات",
 "تئاتر"
-]
+],
+
+participants:735
 
 }
 
@@ -1319,7 +1364,9 @@ question:"آیا سرمایه‌گذاری در علم برای آینده ضر�
 options:[
 "بله",
 "خیر"
-]
+],
+
+participants:391
 
 },
 
@@ -1333,7 +1380,9 @@ options:[
 "پژوهش",
 "سرمایه‌گذاری",
 "همکاری"
-]
+],
+
+participants:823
 
 },
 
@@ -1348,7 +1397,9 @@ options:[
 "فناوری",
 "سرمایه‌گذاری",
 "همکاری"
-]
+],
+
+participants:1370
 
 }
 
@@ -1419,7 +1470,7 @@ pollList.innerHTML="";
 
 
 polls[category].forEach(
-(poll,index)=>{
+(poll)=>{
 
 
 const pollId =
@@ -1449,6 +1500,13 @@ ${poll.question}
 if(voted !== null){
 
 html+=`
+
+<div class="participant-count">
+
+👥 ${poll.participants.toLocaleString("fa-IR")}
+نفر شرکت کرده‌اند
+
+</div>
 
 <div
 class="poll-results"
@@ -1523,7 +1581,7 @@ border-top:1px solid #eee;
 pollList.innerHTML+=html;
 
 
-/* نمایش نتایج رأی قبلی */
+/* نمایش نتیجه */
 
 if(voted !== null){
 
@@ -1615,6 +1673,7 @@ poll.id===pollId
 ){
 
 currentPoll=poll;
+
 currentCategory=category;
 
 }
@@ -1662,27 +1721,92 @@ if(selected===null)return;
 
 
 /*
-فعلاً برای تست:
-فقط رأی فعلی کاربر داریم.
+فعلاً برای آزمایش:
 
-در مرحله Supabase
-آرای واقعی همه کاربران
-اینجا قرار می‌گیرند.
+تعداد شرکت‌کنندگان
+از مقدار participants
+خوانده می‌شود.
+
+در مرحله اتصال Supabase
+این مقدار از تعداد واقعی
+آرای کاربران دریافت خواهد شد.
 */
 
 
-const votes =
-poll.options.map(
-()=>0
+const total =
+poll.participants;
+
+
+/*
+برای نمایش آزمایشی
+درصدها ثابت هستند.
+
+در نسخه واقعی:
+votes[index] / total * 100
+*/
+
+
+let percentages;
+
+
+if(poll.options.length===2){
+
+percentages=[
+72,
+28
+];
+
+}
+
+else if(poll.options.length===3){
+
+percentages=[
+45,
+35,
+20
+];
+
+}
+
+else if(poll.options.length===4){
+
+percentages=[
+40,
+27,
+20,
+13
+];
+
+}
+
+else{
+
+percentages=[
+30,
+25,
+20,
+15,
+10
+];
+
+}
+
+
+/* اطمینان از مجموع 100 */
+
+let sum =
+percentages.reduce(
+(a,b)=>a+b,
+0
 );
 
 
-votes[
-parseInt(selected)
-]=1;
+if(sum!==100){
 
+percentages[0]+=
+100-sum;
 
-const total=1;
+}
 
 
 result.innerHTML="";
@@ -1693,9 +1817,7 @@ poll.options.forEach(
 
 
 const percentage =
-Math.round(
-(votes[index]/total)*100
-);
+percentages[index] || 0;
 
 
 result.innerHTML+=`
@@ -2053,6 +2175,7 @@ key.replace(
 
 
 let foundPoll=null;
+
 let foundCategory=null;
 
 
@@ -2070,6 +2193,7 @@ poll.id===pollId
 ){
 
 foundPoll=poll;
+
 foundCategory=category;
 
 }
