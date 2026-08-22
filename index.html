@@ -1931,7 +1931,7 @@ if(!page)
 return;
 
 page.classList.add("active");
-
+localStorage.setItem("currentPage", id);
 window.scrollTo({
 top:0,
 behavior:"smooth"
