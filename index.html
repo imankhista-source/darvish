@@ -4538,28 +4538,6 @@ initAdmin();
 
 renderAdminLists();
 
-restorePendingVote();
-
-const savedPage =
-localStorage.getItem("currentPage");
-
-if(savedPage){
-
-const page =
-document.getElementById(savedPage);
-
-if(page){
-
-document.querySelectorAll(".page")
-.forEach(p =>
-p.classList.remove("active")
-);
-
-page.classList.add("active");
-
-}
-
-}
 </body>
 
 </html>
