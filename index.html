@@ -1973,12 +1973,10 @@ document.getElementById(
 );
 
 container.innerHTML="";
-
-let list =
-(polls[currentCategory]||[])
-.filter(
-p=>p.active!==false
-);
+let list=(polls[currentCategory]||[])
+.filter(p=>p.active!==false)
+.slice()
+.reverse();
 
 const totalPages =
 Math.max(
