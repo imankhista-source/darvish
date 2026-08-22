@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -176,7 +174,6 @@ input[type="email"],
 input[type="password"],
 select,
 textarea{
-
 width:100%;
 padding:13px;
 border:1px solid #ddd;
@@ -501,7 +498,9 @@ margin:20px 0;
 }
 
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/appwrite@20.0.0"></script>
+
 </head>
 
 
@@ -730,6 +729,7 @@ style="display:none">
 onclick="logout()">
 خروج از حساب
 </button>
+
 <button class="primary-btn"
 onclick="showChangePassword()">
 تغییر رمز عبور
@@ -771,6 +771,7 @@ class="message">
 </div>
 
 </div>
+
 </div>
 
 
@@ -866,7 +867,10 @@ class="message">
 </div>
 
 </div>
+
 </section>
+
+
 <!-- ================= ADMIN LOGIN ================= -->
 
 <section id="adminLoginPage" class="page">
@@ -1062,12 +1066,20 @@ style="display:none">
 
 
 <script>
+
 /* ================= APPWRITE ================= */
 
-const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
-const APPWRITE_PROJECT_ID = "6a81eba700101af16c1d";
+const APPWRITE_ENDPOINT =
+"https://fra.cloud.appwrite.io/v1";
 
-const appwriteClient = new Appwrite.Client();
+const APPWRITE_PROJECT_ID =
+"6a81eba700101af16c1d";
+
+const APPWRITE_BUCKET_ID =
+"didgah-media";
+
+const appwriteClient =
+new Appwrite.Client();
 
 appwriteClient
 .setEndpoint(APPWRITE_ENDPOINT)
@@ -1075,41 +1087,57 @@ appwriteClient
 
 const appwriteStorage =
 new Appwrite.Storage(appwriteClient);
-const APPWRITE_BUCKET_ID = "didgah-media";
+
+
 /* ================= BUTTON EFFECT ================= */
 
-document.addEventListener("pointerdown",function(e){
+document.addEventListener(
+"pointerdown",
+function(e){
 
-const button=e.target.closest("button");
+const button =
+e.target.closest("button");
 
 if(button)
 button.classList.add("pressed");
 
-});
+}
+);
 
-document.addEventListener("pointerup",function(e){
+document.addEventListener(
+"pointerup",
+function(e){
 
-const button=e.target.closest("button");
-
-if(button)
-button.classList.remove("pressed");
-
-});
-
-document.addEventListener("pointercancel",function(e){
-
-const button=e.target.closest("button");
+const button =
+e.target.closest("button");
 
 if(button)
 button.classList.remove("pressed");
 
-});
+}
+);
+
+document.addEventListener(
+"pointercancel",
+function(e){
+
+const button =
+e.target.closest("button");
+
+if(button)
+button.classList.remove("pressed");
+
+}
+);
 
 
 /* ================= ADMIN LOGIN ================= */
 
-const ADMIN_EMAIL="admin@didgah.com";
-const ADMIN_PASSWORD="123456";
+const ADMIN_EMAIL =
+"admin@didgah.com";
+
+const ADMIN_PASSWORD =
+"123456";
 
 
 /* ================= POLL DATA ================= */
@@ -1817,13 +1845,16 @@ active:true
 
 function loadCustomPolls(){
 
-const saved=localStorage.getItem("customPolls");
+const saved =
+localStorage.getItem("customPolls");
 
-if(!saved)return;
+if(!saved)
+return;
 
 try{
 
-const custom=JSON.parse(saved);
+const custom =
+JSON.parse(saved);
 
 Object.keys(custom).forEach(category=>{
 
@@ -1832,8 +1863,15 @@ polls[category]=[];
 
 custom[category].forEach(poll=>{
 
-if(!polls[category].some(p=>p.id===poll.id))
+if(
+!polls[category].some(
+p=>p.id===poll.id
+)
+){
+
 polls[category].push(poll);
+
+}
 
 });
 
@@ -1841,7 +1879,10 @@ polls[category].push(poll);
 
 }catch(e){
 
-console.log("custom polls error");
+console.log(
+"custom polls error",
+e
+);
 
 }
 
@@ -1854,8 +1895,9 @@ const custom={};
 
 Object.keys(polls).forEach(category=>{
 
-const list=polls[category].filter(
-p=>p.id.startsWith("admin_")
+const list =
+polls[category].filter(
+p=>String(p.id).startsWith("admin_")
 );
 
 if(list.length)
@@ -1876,11 +1918,15 @@ JSON.stringify(custom)
 function showPage(id){
 
 document.querySelectorAll(".page")
-.forEach(p=>p.classList.remove("active"));
+.forEach(p=>
+p.classList.remove("active")
+);
 
-const page=document.getElementById(id);
+const page =
+document.getElementById(id);
 
-if(!page)return;
+if(!page)
+return;
 
 page.classList.add("active");
 
@@ -1900,7 +1946,10 @@ let currentPollPage=1;
 const POLLS_PER_PAGE=5;
 
 
-function openPolls(category,page=1){
+function openPolls(
+category,
+page=1
+){
 
 currentCategory=category;
 currentPollPage=page;
@@ -1918,47 +1967,67 @@ renderPolls();
 
 function renderPolls(){
 
-const container=
-document.getElementById("pollList");
+const container =
+document.getElementById(
+"pollList"
+);
 
 container.innerHTML="";
 
-let list=(polls[currentCategory]||[])
-.filter(p=>p.active!==false);
+let list =
+(polls[currentCategory]||[])
+.filter(
+p=>p.active!==false
+);
 
-const totalPages=Math.max(
+const totalPages =
+Math.max(
 1,
-Math.ceil(list.length/POLLS_PER_PAGE)
+Math.ceil(
+list.length/POLLS_PER_PAGE
+)
 );
 
 if(currentPollPage>totalPages)
 currentPollPage=totalPages;
 
-const start=
-(currentPollPage-1)*POLLS_PER_PAGE;
+const start =
+(currentPollPage-1)*
+POLLS_PER_PAGE;
 
 list.slice(
 start,
 start+POLLS_PER_PAGE
-).forEach(p=>{
+).forEach(poll=>{
 
-renderSinglePoll(p,container);
+renderSinglePoll(
+poll,
+container
+);
 
 });
 
-renderPagination(totalPages);
+renderPagination(
+totalPages
+);
 
 }
 
 
 /* ================= SINGLE POLL ================= */
 
-function renderSinglePoll(poll,container){
+function renderSinglePoll(
+poll,
+container
+){
 
-const voted=
-localStorage.getItem("voted_"+poll.id);
+const voted =
+localStorage.getItem(
+"voted_"+poll.id
+);
 
-const div=document.createElement("div");
+const div =
+document.createElement("div");
 
 div.className="poll-card";
 
@@ -1967,10 +2036,9 @@ let html=`
 <h3 class="poll-question">
 ${escapeHTML(poll.question)}
 </h3>
+
 `;
 
-
-/* QUESTION IMAGE */
 
 if(poll.questionImage){
 
@@ -1987,8 +2055,6 @@ onerror="this.style.display='none'">
 }
 
 
-/* QUESTION VIDEO */
-
 if(poll.questionVideo){
 
 html+=`
@@ -1998,7 +2064,8 @@ class="poll-media"
 controls
 playsinline>
 
-<source src="${escapeAttr(poll.questionVideo)}">
+<source
+src="${escapeAttr(poll.questionVideo)}">
 
 مرورگر شما از پخش این فیلم پشتیبانی نمی‌کند.
 
@@ -2015,13 +2082,15 @@ html+=`
 
 <span class="participants">
 👥 شرکت‌کنندگان:
-<strong>${poll.participants}</strong>
+<strong>${Number(poll.participants)||0}</strong>
 </span>
 
 <span class="poll-time">
-🕒 شروع: ${poll.start}
+🕒 شروع:
+${escapeHTML(poll.start||"")}
 &nbsp; | &nbsp;
-مدت: ${poll.duration}
+مدت:
+${escapeHTML(poll.duration||"")}
 </span>
 
 </div>
@@ -2029,9 +2098,10 @@ html+=`
 `;
 
 
-poll.options.forEach((raw,index)=>{
+poll.options.forEach(
+(raw,index)=>{
 
-const option=
+const option =
 typeof raw==="string"
 ?
 {
@@ -2040,7 +2110,12 @@ image:"",
 video:""
 }
 :
-raw;
+(raw||{
+text:"",
+image:"",
+video:""
+});
+
 
 html+=`
 
@@ -2049,7 +2124,7 @@ ${voted!==null?"disabled":""}">
 
 <input
 type="radio"
-name="${poll.id}"
+name="${escapeAttr(poll.id)}"
 value="${index}"
 ${voted!==null?"disabled":""}>
 
@@ -2084,7 +2159,8 @@ class="option-media"
 controls
 playsinline>
 
-<source src="${escapeAttr(option.video)}">
+<source
+src="${escapeAttr(option.video)}">
 
 </video>
 
@@ -2106,18 +2182,22 @@ html+=`
 
 <button
 class="primary-btn vote-button"
-id="voteBtn_${poll.id}"
-onclick="submitVote('${poll.id}')"
+id="voteBtn_${escapeAttr(poll.id)}"
+onclick="submitVote('${escapeJS(poll.id)}')"
 ${voted!==null?"disabled":""}>
 
-${voted!==null
-?"رأی ثبت شده است"
-:"ثبت رأی"}
+${
+voted!==null
+?
+"رأی ثبت شده است"
+:
+"ثبت رأی"
+}
 
 </button>
 
 <div
-id="result_${poll.id}"
+id="result_${escapeAttr(poll.id)}"
 class="result">
 </div>
 
@@ -2130,16 +2210,18 @@ container.appendChild(div);
 
 
 if(voted!==null)
-showResults(poll,voted);
+showResults(poll);
 
 }
 
 
 /* ================= PAGINATION ================= */
 
-function renderPagination(totalPages){
+function renderPagination(
+totalPages
+){
 
-const wrapper=
+const wrapper =
 document.getElementById(
 "paginationWrapper"
 );
@@ -2162,35 +2244,43 @@ return;
 }
 
 
-const pagination=
+const pagination =
 document.createElement("div");
 
 pagination.className="pagination";
 
 
-const prev=
+const prev =
 document.createElement("button");
 
 prev.className="page-btn";
 prev.innerText="‹";
-prev.disabled=currentPollPage===1;
+prev.disabled =
+currentPollPage===1;
 
 prev.onclick=()=>{
 
-if(currentPollPage>1)
+if(currentPollPage>1){
+
 openPolls(
 currentCategory,
 currentPollPage-1
 );
+
+}
 
 };
 
 pagination.appendChild(prev);
 
 
-for(let i=1;i<=totalPages;i++){
+for(
+let i=1;
+i<=totalPages;
+i++
+){
 
-const btn=
+const btn =
 document.createElement("button");
 
 btn.className="page-btn";
@@ -2201,10 +2291,12 @@ btn.classList.add("active");
 btn.innerText=i;
 
 btn.onclick=()=>{
+
 openPolls(
 currentCategory,
 i
 );
+
 };
 
 pagination.appendChild(btn);
@@ -2212,21 +2304,26 @@ pagination.appendChild(btn);
 }
 
 
-const next=
+const next =
 document.createElement("button");
 
 next.className="page-btn";
 next.innerText="›";
-next.disabled=
+next.disabled =
 currentPollPage===totalPages;
 
 next.onclick=()=>{
 
-if(currentPollPage<totalPages)
+if(
+currentPollPage<totalPages
+){
+
 openPolls(
 currentCategory,
 currentPollPage+1
 );
+
+}
 
 };
 
@@ -2235,12 +2332,12 @@ pagination.appendChild(next);
 wrapper.appendChild(pagination);
 
 
-const info=
+const info =
 document.createElement("div");
 
 info.className="page-info";
 
-info.innerText=
+info.innerText =
 "تعداد صفحات: "+totalPages;
 
 wrapper.appendChild(info);
@@ -2252,8 +2349,10 @@ wrapper.appendChild(info);
 
 function submitVote(id){
 
-const user=
-localStorage.getItem("didgahUser");
+const user =
+localStorage.getItem(
+"didgahUser"
+);
 
 if(!user){
 
@@ -2262,7 +2361,9 @@ localStorage.setItem(
 id
 );
 
-showPage("accountPage");
+showPage(
+"accountPage"
+);
 
 showAccountMessage(
 "برای ثبت رأی ابتدا وارد حساب کاربری شوید."
@@ -2273,84 +2374,133 @@ return;
 }
 
 
-const selected=
+const selected =
 document.querySelector(
-`input[name="${id}"]:checked`
+`input[name="${CSS.escape(id)}"]:checked`
 );
 
 if(!selected){
 
-alert("لطفاً یک گزینه را انتخاب کنید.");
+alert(
+"لطفاً یک گزینه را انتخاب کنید."
+);
 
 return;
 
 }
 
 
-const poll=findPollById(id);
+const poll =
+findPollById(id);
 
-if(!poll)return;
+if(!poll)
+return;
+
+
+if(
+localStorage.getItem(
+"voted_"+id
+)!==null
+){
+
+showResults(poll);
+
+return;
+
+}
+
+
+const index =
+parseInt(
+selected.value,
+10
+);
+
+if(
+isNaN(index) ||
+index<0 ||
+index>=poll.options.length
+){
+
+alert(
+"گزینه انتخاب‌شده معتبر نیست."
+);
+
+return;
+
+}
 
 
 localStorage.setItem(
 "voted_"+id,
-selected.value
+String(index)
 );
 
 
-poll.participants++;
+poll.participants =
+(Number(poll.participants)||0)+1;
 
 localStorage.setItem(
 "participantCount_"+id,
-poll.participants
+String(poll.participants)
 );
 
 
-const voteKey="votes_"+id;
+const voteKey =
+"votes_"+id;
 
 let votes;
 
 try{
 
-votes=
+votes =
 JSON.parse(
 localStorage.getItem(voteKey)
-)||poll.options.map(()=>0);
+);
+
+if(
+!Array.isArray(votes) ||
+votes.length!==poll.options.length
+){
+
+votes =
+poll.options.map(()=>0);
+
+}
 
 }catch(e){
 
-votes=poll.options.map(()=>0);
+votes =
+poll.options.map(()=>0);
 
 }
 
 
-const index=parseInt(selected.value);
-
-if(!isNaN(index)){
-
-votes[index]++;
+votes[index] =
+(Number(votes[index])||0)+1;
 
 localStorage.setItem(
 voteKey,
 JSON.stringify(votes)
 );
 
-}
-
 
 document.querySelectorAll(
-`input[name="${id}"]`
+`input[name="${CSS.escape(id)}"]`
 ).forEach(input=>{
 
 input.disabled=true;
 
-input.closest(".poll-option")
-.classList.add("disabled");
+const option =
+input.closest(".poll-option");
+
+if(option)
+option.classList.add("disabled");
 
 });
 
 
-const button=
+const button =
 document.getElementById(
 "voteBtn_"+id
 );
@@ -2358,14 +2508,18 @@ document.getElementById(
 if(button){
 
 button.disabled=true;
-button.innerText="رأی ثبت شده است";
+
+button.innerText =
+"رأی ثبت شده است";
 
 }
 
 
-showResults(poll,selected.value);
+showResults(poll);
 
 updateAccountCount();
+
+renderVoteHistory();
 
 }
 
@@ -2374,33 +2528,49 @@ updateAccountCount();
 
 function showResults(poll){
 
-const result=
+const result =
 document.getElementById(
 "result_"+poll.id
 );
 
-if(!result)return;
+if(!result)
+return;
 
 let votes;
 
 try{
 
-votes=
+votes =
 JSON.parse(
 localStorage.getItem(
 "votes_"+poll.id
 )
-)||poll.options.map(()=>0);
+);
+
+if(
+!Array.isArray(votes) ||
+votes.length!==poll.options.length
+){
+
+votes =
+poll.options.map(()=>0);
+
+}
 
 }catch(e){
 
-votes=poll.options.map(()=>0);
+votes =
+poll.options.map(()=>0);
 
 }
 
 
-const total=
-votes.reduce((a,b)=>a+b,0);
+const total =
+votes.reduce(
+(a,b)=>
+a+(Number(b)||0),
+0
+);
 
 if(total===0){
 
@@ -2411,9 +2581,11 @@ return;
 }
 
 
-const percentages=
+const percentages =
 votes.map(v=>
-Math.round((v/total)*100)
+Math.round(
+((Number(v)||0)/total)*100
+)
 );
 
 
@@ -2426,12 +2598,16 @@ let html=`
 `;
 
 
-poll.options.forEach((raw,index)=>{
+poll.options.forEach(
+(raw,index)=>{
 
-const option=
+const option =
 typeof raw==="string"
-?raw
-:raw.text;
+?
+raw
+:
+(raw?.text||"");
+
 
 html+=`
 
@@ -2439,7 +2615,9 @@ html+=`
 
 <div class="result-label">
 
-<span>${escapeHTML(option)}</span>
+<span>
+${escapeHTML(option)}
+</span>
 
 <span>
 ${percentages[index]}%
@@ -2479,7 +2657,7 @@ function openClosedPolls(){
 
 showPage("closedPage");
 
-const container=
+const container =
 document.getElementById(
 "closedPollList"
 );
@@ -2489,15 +2667,18 @@ container.innerHTML="";
 let found=false;
 
 
-Object.keys(polls).forEach(category=>{
+Object.keys(polls)
+.forEach(category=>{
 
-polls[category].forEach(poll=>{
+polls[category].forEach(
+poll=>{
 
-if(poll.active!==false)return;
+if(poll.active!==false)
+return;
 
 found=true;
 
-const div=
+const div =
 document.createElement("div");
 
 div.className="poll-card";
@@ -2516,13 +2697,17 @@ ${escapeHTML(poll.question)}
 
 <span class="participants">
 👥 شرکت‌کنندگان:
-<strong>${poll.participants}</strong>
+<strong>
+${Number(poll.participants)||0}
+</strong>
 </span>
 
 <span class="poll-time">
-🕒 شروع: ${poll.start}
+🕒 شروع:
+${escapeHTML(poll.start||"")}
 &nbsp; | &nbsp;
-مدت: ${poll.duration}
+مدت:
+${escapeHTML(poll.duration||"")}
 </span>
 
 </div>
@@ -2536,15 +2721,47 @@ container.appendChild(div);
 
 if(poll.questionImage){
 
-const img=
+const img =
 document.createElement("img");
 
-img.src=poll.questionImage;
-img.className="poll-media";
+img.src =
+poll.questionImage;
+
+img.className =
+"poll-media";
+
+img.alt =
+"تصویر نظرسنجی";
 
 div.insertBefore(
 img,
-div.querySelector(".closed-result")
+div.querySelector(
+".closed-result"
+)
+);
+
+}
+
+
+if(poll.questionVideo){
+
+const video =
+document.createElement("video");
+
+video.src =
+poll.questionVideo;
+
+video.className =
+"poll-media";
+
+video.controls=true;
+video.playsInline=true;
+
+div.insertBefore(
+video,
+div.querySelector(
+".closed-result"
+)
 );
 
 }
@@ -2552,7 +2769,9 @@ div.querySelector(".closed-result")
 
 renderClosedResult(
 poll,
-div.querySelector(".closed-result")
+div.querySelector(
+".closed-result"
+)
 );
 
 });
@@ -2575,48 +2794,74 @@ container.innerHTML=`
 }
 
 
-function renderClosedResult(poll,container){
+function renderClosedResult(
+poll,
+container
+){
 
 let votes;
 
 try{
 
-votes=
+votes =
 JSON.parse(
 localStorage.getItem(
 "votes_"+poll.id
 )
-)||poll.options.map(()=>0);
+);
+
+if(
+!Array.isArray(votes) ||
+votes.length!==poll.options.length
+){
+
+votes =
+poll.options.map(()=>0);
+
+}
 
 }catch(e){
 
-votes=poll.options.map(()=>0);
+votes =
+poll.options.map(()=>0);
 
 }
 
 
-let total=
-votes.reduce((a,b)=>a+b,0);
+let total =
+votes.reduce(
+(a,b)=>
+a+(Number(b)||0),
+0
+);
 
 
-/* نتیجه آزمایشی */
+/* نتیجه آزمایشی فقط برای
+نظرسنجی‌های نمونه بدون رأی واقعی */
 
 if(total===0){
 
-votes=
-poll.options.map((_,i)=>
+votes =
+poll.options.map(
+(_,i)=>
 i===0?6:4
 );
 
-total=
-votes.reduce((a,b)=>a+b,0);
+total =
+votes.reduce(
+(a,b)=>
+a+(Number(b)||0),
+0
+);
 
 }
 
 
-const percentages=
+const percentages =
 votes.map(v=>
-Math.round((v/total)*100)
+Math.round(
+((Number(v)||0)/total)*100
+)
 );
 
 
@@ -2629,12 +2874,16 @@ let html=`
 `;
 
 
-poll.options.forEach((raw,index)=>{
+poll.options.forEach(
+(raw,index)=>{
 
-const option=
+const option =
 typeof raw==="string"
-?raw
-:raw.text;
+?
+raw
+:
+(raw?.text||"");
+
 
 html+=`
 
@@ -2684,41 +2933,47 @@ function showRegister(){
 
 showPage("registerPage");
 
+const message =
 document.getElementById(
 "registerMessage"
-).style.display="none";
+);
+
+message.style.display="none";
+
+message.classList.remove("error");
 
 }
 
 
 function register(){
 
-const email=
+const email =
 document.getElementById(
 "registerEmail"
 ).value.trim();
 
-const password=
+const password =
 document.getElementById(
 "registerPassword"
 ).value;
 
-const password2=
+const password2 =
 document.getElementById(
 "registerPassword2"
 ).value;
 
-const message=
+const message =
 document.getElementById(
 "registerMessage"
 );
 
-
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(!email){
 
-message.innerText=
+message.innerText =
 "لطفاً ایمیل خود را وارد کنید.";
 
 message.style.display="block";
@@ -2727,9 +2982,23 @@ return;
 
 }
 
+
+if(!isValidEmail(email)){
+
+message.innerText =
+"لطفاً یک ایمیل معتبر وارد کنید.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
 if(!password){
 
-message.innerText=
+message.innerText =
 "لطفاً رمز عبور را وارد کنید.";
 
 message.style.display="block";
@@ -2738,24 +3007,47 @@ return;
 
 }
 
+
 if(password.length<6){
 
-message.innerText=
+message.innerText =
 "رمز عبور باید حداقل ۶ کاراکتر باشد.";
 
+message.classList.add("error");
 message.style.display="block";
 
 return;
 
 }
 
+
 if(password!==password2){
 
-message.innerText=
+message.innerText =
 "رمزهای عبور یکسان نیستند.";
 
 message.classList.add("error");
+message.style.display="block";
 
+return;
+
+}
+
+
+const oldEmail =
+localStorage.getItem(
+"registeredEmail"
+);
+
+if(
+oldEmail &&
+oldEmail!==email
+){
+
+message.innerText =
+"در این نسخه آزمایشی یک حساب محلی از قبل ثبت شده است.";
+
+message.classList.add("error");
 message.style.display="block";
 
 return;
@@ -2779,9 +3071,7 @@ email
 );
 
 
-message.classList.remove("error");
-
-message.innerText=
+message.innerText =
 "حساب با موفقیت ایجاد شد.";
 
 message.style.display="block";
@@ -2790,7 +3080,30 @@ message.style.display="block";
 setTimeout(()=>{
 
 loadAccount();
+
+const pending =
+localStorage.getItem(
+"pendingVote"
+);
+
+if(pending){
+
+localStorage.removeItem(
+"pendingVote"
+);
+
+const category =
+findCategoryByPoll(
+pending
+);
+
+openPolls(category);
+
+}else{
+
 showPage("accountPage");
+
+}
 
 },700);
 
@@ -2799,49 +3112,52 @@ showPage("accountPage");
 
 function login(){
 
-const email=
-document.getElementById("email")
-.value.trim();
+const email =
+document.getElementById(
+"email"
+).value.trim();
 
-const password=
-document.getElementById("password")
-.value;
+const password =
+document.getElementById(
+"password"
+).value;
 
-const registeredEmail=
+const registeredEmail =
 localStorage.getItem(
 "registeredEmail"
 );
 
-const registeredPassword=
+const registeredPassword =
 localStorage.getItem(
 "registeredPassword"
 );
 
-const message=
+const message =
 document.getElementById(
 "accountMessage"
 );
 
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(
+!email ||
+!password ||
 email!==registeredEmail ||
 password!==registeredPassword
 ){
 
-message.innerText=
+message.innerText =
 "ایمیل یا رمز عبور اشتباه است.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
 
 }
 
-
-message.classList.remove("error");
 
 localStorage.setItem(
 "didgahUser",
@@ -2852,7 +3168,7 @@ email
 loadAccount();
 
 
-const pending=
+const pending =
 localStorage.getItem(
 "pendingVote"
 );
@@ -2864,9 +3180,12 @@ localStorage.removeItem(
 "pendingVote"
 );
 
-openPolls(
-findCategoryByPoll(pending)
+const category =
+findCategoryByPoll(
+pending
 );
+
+openPolls(category);
 
 return;
 
@@ -2893,33 +3212,45 @@ showPage("homePage");
 
 function loadAccount(){
 
-const user=
+const user =
 localStorage.getItem(
 "didgahUser"
 );
 
-if(!user){
-
+const loggedOut =
 document.getElementById(
 "loggedOut"
-).style.display="block";
+);
 
+const loggedIn =
 document.getElementById(
 "loggedIn"
-).style.display="none";
+);
+
+if(!loggedOut || !loggedIn)
+return;
+
+
+if(!user){
+
+loggedOut.style.display="block";
+loggedIn.style.display="none";
+
+const history =
+document.getElementById(
+"voteHistory"
+);
+
+if(history)
+history.innerHTML="";
 
 return;
 
 }
 
 
-document.getElementById(
-"loggedOut"
-).style.display="none";
-
-document.getElementById(
-"loggedIn"
-).style.display="block";
+loggedOut.style.display="none";
+loggedIn.style.display="block";
 
 document.getElementById(
 "userEmail"
@@ -2934,60 +3265,86 @@ renderVoteHistory();
 
 function updateAccountCount(){
 
+const voteCount =
+document.getElementById(
+"voteCount"
+);
+
+if(!voteCount)
+return;
+
 let count=0;
 
-Object.keys(localStorage).forEach(key=>{
+Object.keys(localStorage)
+.forEach(key=>{
 
-if(key.startsWith("voted_"))
+if(
+key.startsWith("voted_")
+)
 count++;
 
 });
 
-document.getElementById(
-"voteCount"
-).innerText=count;
+voteCount.innerText=count;
 
 }
 
 
 function renderVoteHistory(){
 
-const history=
+const history =
 document.getElementById(
 "voteHistory"
 );
+
+if(!history)
+return;
 
 history.innerHTML="";
 
 let count=0;
 
 
-Object.keys(localStorage).forEach(key=>{
+Object.keys(localStorage)
+.forEach(key=>{
 
-if(!key.startsWith("voted_"))
+if(
+!key.startsWith("voted_")
+)
 return;
 
 count++;
 
-const id=
-key.replace("voted_","");
+const id =
+key.replace(
+"voted_",
+""
+);
 
-const poll=findPollById(id);
+const poll =
+findPollById(id);
 
-if(!poll)return;
+if(!poll)
+return;
 
-const category=
+const category =
 findCategoryByPoll(id);
 
-const index=
-parseInt(localStorage.getItem(key));
+const index =
+parseInt(
+localStorage.getItem(key),
+10
+);
 
-const option=
-typeof poll.options[index]==="string"
+const rawOption =
+poll.options[index];
+
+const option =
+typeof rawOption==="string"
 ?
-poll.options[index]
+rawOption
 :
-poll.options[index]?.text;
+(rawOption?.text||"");
 
 
 history.innerHTML+=`
@@ -2998,16 +3355,22 @@ history.innerHTML+=`
 ${escapeHTML(category)}
 </strong>
 
-<div style="margin-top:5px;font-size:14px;">
-${escapeHTML(poll.question)}
+<div
+style="margin-top:5px;font-size:14px;">
+
+${escapeHTML(
+poll.question
+)}
+
 </div>
 
-<div class="small"
+<div
+class="small"
 style="margin-top:5px;">
 
 انتخاب شما:
 <strong>
-${escapeHTML(option||"")}
+${escapeHTML(option)}
 </strong>
 
 </div>
@@ -3034,26 +3397,44 @@ history.innerHTML=`
 }
 
 
-function showAccountMessage(text){
+function showAccountMessage(
+text,
+isError=false
+){
 
-const message=
+const message =
 document.getElementById(
 "accountMessage"
 );
 
+if(!message)
+return;
+
 message.innerText=text;
-message.classList.remove("error");
+
+message.classList.toggle(
+"error",
+isError
+);
+
 message.style.display="block";
+
+}
+
+
 /* ================= CHANGE PASSWORD ================= */
 
 function showChangePassword(){
 
-const box=
+const box =
 document.getElementById(
 "changePasswordBox"
 );
 
-box.style.display=
+if(!box)
+return;
+
+box.style.display =
 box.style.display==="none"
 ?
 "block"
@@ -3065,27 +3446,27 @@ box.style.display==="none"
 
 function changePassword(){
 
-const oldPassword=
+const oldPassword =
 document.getElementById(
 "oldPassword"
 ).value;
 
-const newPassword=
+const newPassword =
 document.getElementById(
 "newPassword"
 ).value;
 
-const newPassword2=
+const newPassword2 =
 document.getElementById(
 "newPassword2"
 ).value;
 
-const message=
+const message =
 document.getElementById(
 "changePasswordMessage"
 );
 
-const currentPassword=
+const currentPassword =
 localStorage.getItem(
 "registeredPassword"
 );
@@ -3096,7 +3477,7 @@ message.classList.remove("error");
 
 if(!oldPassword){
 
-message.innerText=
+message.innerText =
 "لطفاً رمز عبور فعلی را وارد کنید.";
 
 message.style.display="block";
@@ -3108,11 +3489,10 @@ return;
 
 if(oldPassword!==currentPassword){
 
-message.innerText=
+message.innerText =
 "رمز عبور فعلی اشتباه است.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
@@ -3122,9 +3502,10 @@ return;
 
 if(!newPassword){
 
-message.innerText=
+message.innerText =
 "لطفاً رمز عبور جدید را وارد کنید.";
 
+message.classList.add("error");
 message.style.display="block";
 
 return;
@@ -3134,11 +3515,10 @@ return;
 
 if(newPassword.length<6){
 
-message.innerText=
+message.innerText =
 "رمز عبور جدید باید حداقل ۶ کاراکتر باشد.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
@@ -3148,11 +3528,23 @@ return;
 
 if(newPassword!==newPassword2){
 
-message.innerText=
+message.innerText =
 "رمزهای عبور جدید یکسان نیستند.";
 
 message.classList.add("error");
+message.style.display="block";
 
+return;
+
+}
+
+
+if(newPassword===oldPassword){
+
+message.innerText =
+"رمز عبور جدید باید با رمز قبلی متفاوت باشد.";
+
+message.classList.add("error");
 message.style.display="block";
 
 return;
@@ -3166,9 +3558,10 @@ newPassword
 );
 
 
-message.innerText=
+message.innerText =
 "رمز عبور با موفقیت تغییر کرد.";
 
+message.classList.remove("error");
 message.style.display="block";
 
 
@@ -3185,33 +3578,34 @@ document.getElementById(
 ).value="";
 
 }
-}
 
 
 /* ================= FORGOT PASSWORD ================= */
 
 function forgotPassword(){
 
-const email=
+const email =
 document.getElementById(
 "forgotEmail"
 ).value.trim();
 
-const registered=
+const registered =
 localStorage.getItem(
 "registeredEmail"
 );
 
-const message=
+const message =
 document.getElementById(
 "forgotMessage"
 );
 
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(!email){
 
-message.innerText=
+message.innerText =
 "لطفاً ایمیل را وارد کنید.";
 
 message.style.display="block";
@@ -3220,24 +3614,39 @@ return;
 
 }
 
-if(email!==registered){
 
-message.innerText=
-"حسابی با این ایمیل پیدا نشد.";
+if(
+!isValidEmail(email)
+){
+
+message.innerText =
+"لطفاً یک ایمیل معتبر وارد کنید.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
 
 }
 
-message.classList.remove("error");
 
-message.innerText=
+if(email!==registered){
+
+message.innerText =
+"حسابی با این ایمیل پیدا نشد.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
+message.innerText =
 "درخواست بازیابی رمز عبور ثبت شد.";
 
+message.classList.remove("error");
 message.style.display="block";
 
 }
@@ -3247,40 +3656,47 @@ message.style.display="block";
 
 function adminLogin(){
 
-const email=
+const email =
 document.getElementById(
 "adminEmail"
 ).value.trim();
 
-const password=
+const password =
 document.getElementById(
 "adminPassword"
 ).value;
 
-const message=
+const message =
 document.getElementById(
 "adminLoginMessage"
 );
 
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(
 email!==ADMIN_EMAIL ||
 password!==ADMIN_PASSWORD
 ){
 
-message.innerText=
+message.innerText =
 "ایمیل یا رمز عبور مدیر اشتباه است.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
 
 }
 
+
+message.innerText =
+"ورود موفق بود.";
+
 message.classList.remove("error");
+
+message.style.display="block";
 
 localStorage.setItem(
 "didgahAdmin",
@@ -3295,6 +3711,8 @@ renderAdminLists();
 
 }
 
+
+/* ================= ADMIN LOGOUT ================= */
 
 function adminLogout(){
 
@@ -3311,10 +3729,13 @@ showPage("homePage");
 
 function initAdmin(){
 
-const container=
+const container =
 document.getElementById(
 "adminOptions"
 );
+
+if(!container)
+return;
 
 container.innerHTML="";
 
@@ -3326,18 +3747,22 @@ addAdminOption();
 
 function addAdminOption(){
 
-const container=
+const container =
 document.getElementById(
 "adminOptions"
 );
 
-const index=
+if(!container)
+return;
+
+const index =
 container.children.length+1;
 
-const row=
+const row =
 document.createElement("div");
 
-row.className="option-input-row";
+row.className =
+"option-input-row";
 
 row.innerHTML=`
 
@@ -3370,9 +3795,12 @@ accept="video/*">
 
 </div>
 
+</div>
+
 <button
+type="button"
 class="remove-option"
-onclick="this.parentElement.remove()">
+onclick="removeAdminOption(this)">
 
 ×
 
@@ -3385,20 +3813,82 @@ container.appendChild(row);
 }
 
 
+function removeAdminOption(button){
+
+const row =
+button.closest(
+".option-input-row"
+);
+
+if(!row)
+return;
+
+const container =
+document.getElementById(
+"adminOptions"
+);
+
+if(
+container.children.length<=2
+){
+
+alert(
+"حداقل دو گزینه باید وجود داشته باشد."
+);
+
+return;
+
+}
+
+row.remove();
+
+renumberAdminOptions();
+
+}
+
+
+function renumberAdminOptions(){
+
+const rows =
+document.querySelectorAll(
+"#adminOptions .option-input-row"
+);
+
+rows.forEach(
+(row,index)=>{
+
+const input =
+row.querySelector(
+".admin-option"
+);
+
+if(input){
+
+input.placeholder =
+"گزینه "+(index+1);
+
+}
+
+});
+
+}
+
+
 /* ================= CREATE POLL ================= */
+
 async function createPoll(){
 
-const category=
+const category =
 document.getElementById(
 "adminCategory"
 ).value;
 
-const question=
+const question =
 document.getElementById(
 "adminQuestion"
 ).value.trim();
 
-const duration=
+const duration =
 document.getElementById(
 "adminDuration"
 ).value;
@@ -3413,12 +3903,12 @@ document.getElementById(
 "adminQuestionVideoFile"
 ).files[0];
 
-const rows=
+const rows =
 document.querySelectorAll(
 "#adminOptions .option-input-row"
 );
 
-const message=
+const message =
 document.getElementById(
 "adminCreateMessage"
 );
@@ -3429,9 +3919,46 @@ message.classList.remove("error");
 
 if(!question){
 
-message.innerText=
+message.innerText =
 "لطفاً سؤال نظرسنجی را وارد کنید.";
 
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
+if(
+questionImageFile &&
+!questionImageFile.type.startsWith(
+"image/"
+)
+){
+
+message.innerText =
+"فایل تصویر سؤال معتبر نیست.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
+if(
+questionVideoFile &&
+!questionVideoFile.type.startsWith(
+"video/"
+)
+){
+
+message.innerText =
+"فایل فیلم سؤال معتبر نیست.";
+
+message.classList.add("error");
 message.style.display="block";
 
 return;
@@ -3442,7 +3969,9 @@ return;
 const options=[];
 
 
-for(const row of rows){
+for(
+const row of rows
+){
 
 const text =
 row.querySelector(
@@ -3459,50 +3988,65 @@ row.querySelector(
 ".admin-option-video-file"
 ).files[0];
 
-if(text){
+if(!text)
+continue;
 
-let image = "";
-let video = "";
 
-if(imageFile){
-    image = await uploadToAppwrite(imageFile);
+if(
+imageFile &&
+!imageFile.type.startsWith(
+"image/"
+)
+){
+
+message.innerText =
+"یکی از فایل‌های تصویر گزینه‌ها معتبر نیست.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
 }
 
-if(videoFile){
-    video = await uploadToAppwrite(videoFile);
+
+if(
+videoFile &&
+!videoFile.type.startsWith(
+"video/"
+)
+){
+
+message.innerText =
+"یکی از فایل‌های فیلم گزینه‌ها معتبر نیست.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
 }
+
 
 options.push({
 
 text:text,
-image:image,
-video:video
+imageFile:imageFile||null,
+videoFile:videoFile||null,
+image:"",
+video:""
 
 });
-
-}
-
-}
-
-message.innerText=
-"حداقل دو گزینه لازم است.";
-
-message.classList.add("error");
-
-message.style.display="block";
-
-return;
 
 }
 
 
 if(options.length<2){
 
-message.innerText=
+message.innerText =
 "حداقل دو گزینه لازم است.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
@@ -3510,40 +4054,140 @@ return;
 }
 
 
-const start=
+/* جلوگیری از ایجاد گزینه‌های تکراری */
+
+const optionTexts =
+options.map(
+o=>o.text.trim().toLowerCase()
+);
+
+const uniqueOptionTexts =
+new Set(optionTexts);
+
+if(
+uniqueOptionTexts.size!==optionTexts.length
+){
+
+message.innerText =
+"گزینه‌های پاسخ نباید تکراری باشند.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
+const createButton =
+document.querySelector(
+"#adminActiveSection .primary-btn"
+);
+
+if(createButton){
+
+createButton.disabled=true;
+createButton.innerText =
+"در حال ایجاد...";
+
+}
+
+
+try{
+
+
+/* آپلود تصویر سؤال */
+
+let questionImage="";
+
+if(questionImageFile){
+
+questionImage =
+await uploadToAppwrite(
+questionImageFile
+);
+
+}
+
+
+/* آپلود فیلم سؤال */
+
+let questionVideo="";
+
+if(questionVideoFile){
+
+questionVideo =
+await uploadToAppwrite(
+questionVideoFile
+);
+
+}
+
+
+/* آپلود فایل‌های گزینه‌ها */
+
+for(
+const option of options
+){
+
+if(option.imageFile){
+
+option.image =
+await uploadToAppwrite(
+option.imageFile
+);
+
+}
+
+if(option.videoFile){
+
+option.video =
+await uploadToAppwrite(
+option.videoFile
+);
+
+}
+
+delete option.imageFile;
+delete option.videoFile;
+
+}
+
+
+const start =
 new Date().toLocaleDateString(
 "fa-IR"
 );
-let questionImage = "";
-let questionVideo = "";
 
-if(questionImageFile){
-    questionImage = await uploadToAppwrite(questionImageFile);
-}
-
-if(questionVideoFile){
-    questionVideo = await uploadToAppwrite(questionVideoFile);
-}
 
 const poll={
 
-id:"admin_"+Date.now(),
+id:
+"admin_"+Date.now(),
 
-question:question,
+question:
+question,
 
-questionImage:questionImage,
+questionImage:
+questionImage,
 
-questionVideo:questionVideo,
+questionVideo:
+questionVideo,
 
-options:options,
+options:
+options,
 
-participants:0,
+participants:
+0,
 
-start:start,
+start:
+start,
 
-duration:duration,
+duration:
+duration,
 
-active:true
+active:
+true
 
 };
 
@@ -3552,14 +4196,17 @@ if(!polls[category])
 polls[category]=[];
 
 
-polls[category].push(poll);
+polls[category].push(
+poll
+);
 
 saveCustomPolls();
 
 
-message.innerText=
+message.innerText =
 "نظرسنجی با موفقیت ایجاد شد.";
 
+message.classList.remove("error");
 message.style.display="block";
 
 
@@ -3575,25 +4222,57 @@ document.getElementById(
 "adminQuestionVideoFile"
 ).value="";
 
+
 initAdmin();
 
 renderAdminLists();
 
+
+}catch(error){
+
+console.error(
+"Create poll error:",
+error
+);
+
+message.innerText =
+error.message ||
+"ایجاد نظرسنجی انجام نشد.";
+
+message.classList.add("error");
+message.style.display="block";
+
+
+}finally{
+
+if(createButton){
+
+createButton.disabled=false;
+
+createButton.innerText =
+"ایجاد نظرسنجی";
+
 }
 
+}
 
+}
 /* ================= FIND POLL ================= */
 
 function findPollById(id){
 
-for(const category of Object.keys(polls)){
+for(
+const category
+of Object.keys(polls)
+){
 
-const poll=
+const poll =
 polls[category].find(
 p=>p.id===id
 );
 
-if(poll)return poll;
+if(poll)
+return poll;
 
 }
 
@@ -3604,14 +4283,20 @@ return null;
 
 function findCategoryByPoll(id){
 
-for(const category of Object.keys(polls)){
+for(
+const category
+of Object.keys(polls)
+){
 
 if(
 polls[category].some(
 p=>p.id===id
 )
-)
+){
+
 return category;
+
+}
 
 }
 
@@ -3622,36 +4307,62 @@ return "ورزش";
 
 /* ================= DELETE ================= */
 
-function deletePoll(category,id){
+function deletePoll(
+category,
+id
+){
 
-if(!confirm(
+if(
+!confirm(
 "آیا از حذف این نظرسنجی مطمئن هستید؟"
-))
+)
+)
 return;
 
 
-polls[category]=
+polls[category] =
 polls[category].filter(
 p=>p.id!==id
 );
+
 
 saveCustomPolls();
 
 renderAdminLists();
 
-if(currentCategory===category)
+
+if(
+currentCategory===category
+){
+
 renderPolls();
+
+}
 
 }
 
 
 /* ================= CLOSE ================= */
 
-function closePoll(category,id){
+function closePoll(
+category,
+id
+){
 
-const poll=findPollById(id);
+const poll =
+findPollById(id);
 
-if(!poll)return;
+if(!poll)
+return;
+
+
+if(
+!confirm(
+"آیا می‌خواهید این نظرسنجی بسته شود؟"
+)
+)
+return;
+
 
 poll.active=false;
 
@@ -3659,32 +4370,72 @@ saveCustomPolls();
 
 renderAdminLists();
 
-if(currentCategory===category)
+
+if(
+currentCategory===category
+){
+
 renderPolls();
+
+}
+
+}
+
+
+/* ================= REOPEN ================= */
+
+function reopenPoll(
+category,
+id
+){
+
+const poll =
+findPollById(id);
+
+if(!poll)
+return;
+
+
+poll.active=true;
+
+saveCustomPolls();
+
+renderAdminLists();
+
+
+if(
+currentCategory===category
+){
+
+renderPolls();
+
+}
 
 }
 
 
 /* ================= ADMIN TABS ================= */
 
-function showAdminTab(tab){
+function showAdminTab(
+tab
+){
 
-const active=
+const active =
 document.getElementById(
 "adminActiveSection"
 );
 
-const closed=
+const closed =
 document.getElementById(
 "adminClosedSection"
 );
 
-const activeTab=
+const activeTab =
 document.getElementById(
 "activeAdminTab"
 );
 
-const closedTab=
+const closedTab =
 document.getElementById(
 "closedAdminTab"
 );
@@ -3717,28 +4468,38 @@ renderAdminLists();
 
 function renderAdminLists(){
 
-const activeList=
+const activeList =
 document.getElementById(
 "adminActiveList"
 );
 
-const closedList=
+const closedList =
 document.getElementById(
 "adminClosedList"
 );
+
+if(
+!activeList ||
+!closedList
+)
+return;
+
 
 activeList.innerHTML="";
 closedList.innerHTML="";
 
 
-Object.keys(polls).forEach(category=>{
+Object.keys(polls)
+.forEach(category=>{
 
-polls[category].forEach(poll=>{
+polls[category].forEach(
+poll=>{
 
-const div=
+const div =
 document.createElement("div");
 
-div.className="admin-poll";
+div.className =
+"admin-poll";
 
 
 if(poll.active!==false){
@@ -3762,15 +4523,15 @@ ${poll.options.length}
 <br>
 
 شرکت‌کنندگان:
-${poll.participants}
+${Number(poll.participants)||0}
 
 </div>
 
 <button
 class="close-btn"
 onclick="closePoll(
-'${category}',
-'${poll.id}'
+'${escapeJS(category)}',
+'${escapeJS(poll.id)}'
 )">
 بستن نظرسنجی
 </button>
@@ -3778,15 +4539,17 @@ onclick="closePoll(
 <button
 class="delete-btn"
 onclick="deletePoll(
-'${category}',
-'${poll.id}'
+'${escapeJS(category)}',
+'${escapeJS(poll.id)}'
 )">
 حذف نظرسنجی
 </button>
 
 `;
 
-activeList.appendChild(div);
+activeList.appendChild(
+div
+);
 
 }else{
 
@@ -3804,22 +4567,33 @@ ${escapeHTML(category)}
 <br>
 
 شرکت‌کنندگان:
-${poll.participants}
+${Number(poll.participants)||0}
 
 </div>
 
 <button
+class="close-btn"
+onclick="reopenPoll(
+'${escapeJS(category)}',
+'${escapeJS(poll.id)}'
+)">
+باز کردن دوباره
+</button>
+
+<button
 class="delete-btn"
 onclick="deletePoll(
-'${category}',
-'${poll.id}'
+'${escapeJS(category)}',
+'${escapeJS(poll.id)}'
 )">
 حذف نظرسنجی
 </button>
 
 `;
 
-closedList.appendChild(div);
+closedList.appendChild(
+div
+);
 
 }
 
@@ -3828,7 +4602,9 @@ closedList.appendChild(div);
 });
 
 
-if(!activeList.children.length){
+if(
+!activeList.children.length
+){
 
 activeList.innerHTML=`
 
@@ -3841,7 +4617,9 @@ activeList.innerHTML=`
 }
 
 
-if(!closedList.children.length){
+if(
+!closedList.children.length
+){
 
 closedList.innerHTML=`
 
@@ -3860,12 +4638,34 @@ closedList.innerHTML=`
 
 function escapeHTML(value){
 
-return String(value??"")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+return String(
+value??""
+)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
 
 }
 
@@ -3877,12 +4677,57 @@ return escapeHTML(value);
 }
 
 
+function escapeJS(value){
+
+return String(
+value??""
+)
+
+.replace(
+/\\/g,
+"\\\\"
+)
+
+.replace(
+/'/g,
+"\\'"
+)
+
+.replace(
+/"/g,
+'\\"'
+)
+
+.replace(
+/\r/g,
+"\\r"
+)
+
+.replace(
+/\n/g,
+"\\n"
+);
+
+}
+
+
+function isValidEmail(email){
+
+return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+.test(email);
+
+}
+
+
 /* ================= APPWRITE UPLOAD ================= */
 
-async function uploadToAppwrite(file){
+async function uploadToAppwrite(
+file
+){
 
 if(!file)
 return "";
+
 
 try{
 
@@ -3893,35 +4738,297 @@ Appwrite.ID.unique(),
 file
 );
 
+
 const fileUrl =
 appwriteStorage.getFileView(
 APPWRITE_BUCKET_ID,
 result.$id
 );
 
+
 return fileUrl.toString();
+
 
 }catch(error){
 
-console.error("Appwrite upload error:",error);
-
-alert(
-"آپلود فایل انجام نشد.\n"+
-"لطفاً دسترسی‌های Storage در Appwrite را بررسی کنید."
+console.error(
+"Appwrite upload error:",
+error
 );
 
-return "";
+
+throw new Error(
+"آپلود فایل انجام نشد. لطفاً دسترسی‌های Storage در Appwrite را بررسی کنید."
+);
 
 }
 
 }
+
+
+/* ================= LOCAL STORAGE CLEANUP ================= */
+
+function syncParticipantCounts(){
+
+Object.keys(polls)
+.forEach(category=>{
+
+polls[category].forEach(
+poll=>{
+
+const saved =
+localStorage.getItem(
+"participantCount_"+poll.id
+);
+
+if(saved!==null){
+
+const number =
+parseInt(
+saved,
+10
+);
+
+if(!isNaN(number)){
+
+poll.participants =
+number;
+
+}
+
+}
+
+});
+
+});
+
+}
+
+
+/* ================= DATA VALIDATION ================= */
+
+function normalizePollData(){
+
+Object.keys(polls)
+.forEach(category=>{
+
+if(
+!Array.isArray(
+polls[category]
+)
+){
+
+polls[category]=[];
+
+}
+
+
+polls[category].forEach(
+poll=>{
+
+if(
+!Array.isArray(
+poll.options
+)
+){
+
+poll.options=[];
+
+}
+
+
+if(
+typeof poll.participants!=="number"
+){
+
+poll.participants =
+Number(
+poll.participants
+)||0;
+
+}
+
+
+if(
+typeof poll.active!=="boolean"
+){
+
+poll.active =
+poll.active!==false;
+
+}
+
+
+if(!poll.start)
+poll.start="";
+
+
+if(!poll.duration)
+poll.duration="";
+
+
+poll.options =
+poll.options.map(
+option=>{
+
+if(
+typeof option==="string"
+){
+
+return {
+
+text:option,
+image:"",
+video:""
+
+};
+
+}
+
+
+return {
+
+text:
+option?.text||"",
+
+image:
+option?.image||"",
+
+video:
+option?.video||""
+
+};
+
+}
+
+);
+
+});
+
+});
+
+}
+
+
+/* ================= ACCOUNT STATE ================= */
+
+function restorePendingVote(){
+
+const pending =
+localStorage.getItem(
+"pendingVote"
+);
+
+if(!pending)
+return;
+
+
+const poll =
+findPollById(pending);
+
+if(!poll){
+
+localStorage.removeItem(
+"pendingVote"
+);
+
+return;
+
+}
+
+
+const user =
+localStorage.getItem(
+"didgahUser"
+);
+
+if(!user)
+return;
+
+
+localStorage.removeItem(
+"pendingVote"
+);
+
+openPolls(
+findCategoryByPoll(pending)
+);
+
+}
+
+
+/* ================= AUTO REFRESH ================= */
+
+function refreshCurrentPage(){
+
+if(
+document.getElementById(
+"pollPage"
+).classList.contains(
+"active"
+)
+){
+
+renderPolls();
+
+}
+
+if(
+document.getElementById(
+"closedPage"
+).classList.contains(
+"active"
+)
+){
+
+openClosedPolls();
+
+}
+
+if(
+document.getElementById(
+"adminPage"
+).classList.contains(
+"active"
+)
+){
+
+renderAdminLists();
+
+}
+
+if(
+document.getElementById(
+"accountPage"
+).classList.contains(
+"active"
+)
+){
+
+loadAccount();
+
+}
+
+}
+
+
 /* ================= START ================= */
 
+normalizePollData();
+
 loadCustomPolls();
+
+normalizePollData();
+
+syncParticipantCounts();
 
 loadAccount();
 
 initAdmin();
+
+renderAdminLists();
+
+restorePendingVote();
 
 </script>
 
