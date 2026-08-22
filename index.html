@@ -730,7 +730,47 @@ style="display:none">
 onclick="logout()">
 خروج از حساب
 </button>
+<button class="primary-btn"
+onclick="showChangePassword()">
+تغییر رمز عبور
+</button>
 
+<div id="changePasswordBox"
+style="display:none;margin-top:15px;">
+
+<label>رمز عبور فعلی</label>
+
+<input
+type="password"
+id="oldPassword"
+placeholder="رمز عبور فعلی">
+
+<label>رمز عبور جدید</label>
+
+<input
+type="password"
+id="newPassword"
+placeholder="رمز عبور جدید">
+
+<label>تکرار رمز عبور جدید</label>
+
+<input
+type="password"
+id="newPassword2"
+placeholder="تکرار رمز عبور جدید">
+
+<button
+class="primary-btn"
+onclick="changePassword()">
+ذخیره رمز جدید
+</button>
+
+<div
+id="changePasswordMessage"
+class="message">
+</div>
+
+</div>
 </div>
 
 
@@ -2995,7 +3035,147 @@ document.getElementById(
 message.innerText=text;
 message.classList.remove("error");
 message.style.display="block";
+/* ================= CHANGE PASSWORD ================= */
 
+function showChangePassword(){
+
+const box=
+document.getElementById(
+"changePasswordBox"
+);
+
+box.style.display=
+box.style.display==="none"
+?
+"block"
+:
+"none";
+
+}
+
+
+function changePassword(){
+
+const oldPassword=
+document.getElementById(
+"oldPassword"
+).value;
+
+const newPassword=
+document.getElementById(
+"newPassword"
+).value;
+
+const newPassword2=
+document.getElementById(
+"newPassword2"
+).value;
+
+const message=
+document.getElementById(
+"changePasswordMessage"
+);
+
+const currentPassword=
+localStorage.getItem(
+"registeredPassword"
+);
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+if(!oldPassword){
+
+message.innerText=
+"لطفاً رمز عبور فعلی را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(oldPassword!==currentPassword){
+
+message.innerText=
+"رمز عبور فعلی اشتباه است.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(!newPassword){
+
+message.innerText=
+"لطفاً رمز عبور جدید را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(newPassword.length<6){
+
+message.innerText=
+"رمز عبور جدید باید حداقل ۶ کاراکتر باشد.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(newPassword!==newPassword2){
+
+message.innerText=
+"رمزهای عبور جدید یکسان نیستند.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+
+localStorage.setItem(
+"registeredPassword",
+newPassword
+);
+
+
+message.innerText=
+"رمز عبور با موفقیت تغییر کرد.";
+
+message.style.display="block";
+
+
+document.getElementById(
+"oldPassword"
+).value="";
+
+document.getElementById(
+"newPassword"
+).value="";
+
+document.getElementById(
+"newPassword2"
+).value="";
+
+}
 }
 
 
