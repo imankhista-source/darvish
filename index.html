@@ -4720,16 +4720,16 @@ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 
 /* ================= APPWRITE UPLOAD ================= */
-
-async function uploadToAppwrite(
-file
-){
+async function uploadToAppwrite(file){
 
 if(!file)
 return "";
 
-
 try{
+
+console.log("شروع آپلود:", file.name);
+console.log("حجم فایل:", file.size);
+console.log("نوع فایل:", file.type);
 
 const result =
 await appwriteStorage.createFile(
@@ -4738,6 +4738,7 @@ Appwrite.ID.unique(),
 file
 );
 
+console.log("آپلود موفق:", result);
 
 const fileUrl =
 appwriteStorage.getFileView(
@@ -4745,27 +4746,31 @@ APPWRITE_BUCKET_ID,
 result.$id
 );
 
+console.log("آدرس فایل:", fileUrl.toString());
 
 return fileUrl.toString();
 
-
 }catch(error){
 
-console.error(
-"Appwrite upload error:",
-error
+console.error("========== APPWRITE UPLOAD ERROR ==========");
+console.error("Code:", error.code);
+console.error("Type:", error.type);
+console.error("Message:", error.message);
+console.error("Full error:", error);
+console.error("===========================================");
+
+alert(
+"خطای واقعی آپلود:\n\n"+
+"Code: "+(error.code||"نامشخص")+
+"\nType: "+(error.type||"نامشخص")+
+"\nMessage: "+(error.message||"نامشخص")
 );
 
-
-throw new Error(
-"آپلود فایل انجام نشد. لطفاً دسترسی‌های Storage در Appwrite را بررسی کنید."
-);
+return "";
 
 }
 
 }
-
-
 /* ================= LOCAL STORAGE CLEANUP ================= */
 
 function syncParticipantCounts(){
