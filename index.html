@@ -1290,7 +1290,53 @@ active:true
 ]
 
 };
+/* ================= DELETED POLLS ================= */
 
+function getDeletedPollIds(){
+
+const saved =
+localStorage.getItem("deletedPolls");
+
+if(!saved)
+return [];
+
+try{
+
+const deleted =
+JSON.parse(saved);
+
+return Array.isArray(deleted)
+? deleted
+: [];
+
+}catch(e){
+
+return [];
+
+}
+
+}
+
+
+function applyDeletedPolls(){
+
+const deleted =
+getDeletedPollIds();
+
+if(!deleted.length)
+return;
+
+Object.keys(polls)
+.forEach(category=>{
+
+polls[category] =
+polls[category].filter(
+poll=>!deleted.includes(poll.id)
+);
+
+});
+
+}
 
 /* ================= CUSTOM POLLS ================= */
 
@@ -3769,6 +3815,23 @@ if(
 return;
 
 
+const deleted =
+getDeletedPollIds();
+
+if(
+!deleted.includes(id)
+){
+
+deleted.push(id);
+
+localStorage.setItem(
+"deletedPolls",
+JSON.stringify(deleted)
+);
+
+}
+
+
 polls[category] =
 polls[category].filter(
 p=>p.id!==id
@@ -4472,6 +4535,8 @@ normalizePollData();
 
 loadCustomPolls();
 
+applyDeletedPolls();
+
 normalizePollData();
 
 syncParticipantCounts();
@@ -4483,9 +4548,6 @@ initAdmin();
 renderAdminLists();
 
 restorePendingVote();
-
-</script>
-
 </body>
 
 </html>
