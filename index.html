@@ -4539,6 +4539,14 @@ initAdmin();
 renderAdminLists();
 
 restorePendingVote();
+const savedPage =
+localStorage.getItem("currentPage");
+
+if(savedPage){
+
+showPage(savedPage);
+
+}
 </body>
 
 </html>
