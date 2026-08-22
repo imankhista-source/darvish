@@ -971,24 +971,22 @@ onclick="showAdminTab('closed')">
 <textarea id="adminQuestion"
 placeholder="سؤال نظرسنجی را بنویسید"></textarea>
 
-
 <label class="media-label">
-🖼️ عکس سؤال (اختیاری)
+🖼️ تصویر سؤال
 </label>
 
 <input
 type="file"
-id="adminQuestionImage"
+id="adminQuestionImageFile"
 accept="image/*">
 
-
 <label class="media-label">
-🎬 فیلم سؤال (اختیاری)
+🎬 فیلم سؤال
 </label>
 
 <input
 type="file"
-id="adminQuestionVideo"
+id="adminQuestionVideoFile"
 accept="video/*">
 
 
@@ -3353,24 +3351,22 @@ placeholder="گزینه ${index}">
 <div class="option-admin-media">
 
 <label class="media-label">
-🖼️ آدرس عکس این گزینه
+🖼️ تصویر این گزینه
 </label>
 
 <input
-type="text"
-class="admin-option-image"
-placeholder="https://example.com/image.jpg">
+type="file"
+class="admin-option-image-file"
+accept="image/*">
 
 <label class="media-label">
-🎬 آدرس فیلم این گزینه
+🎬 فیلم این گزینه
 </label>
 
 <input
-type="text"
-class="admin-option-video"
-placeholder="https://example.com/video.mp4">
-
-</div>
+type="file"
+class="admin-option-video-file"
+accept="video/*">
 
 </div>
 
