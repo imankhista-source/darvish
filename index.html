@@ -501,7 +501,7 @@ margin:20px 0;
 }
 
 </style>
-
+<script src="https://cdn.jsdelivr.net/npm/appwrite@20.0.0"></script>
 </head>
 
 
@@ -867,9 +867,6 @@ class="message">
 
 </div>
 
-</section>
-
-
 <!-- ================= ADMIN LOGIN ================= -->
 
 <section id="adminLoginPage" class="page">
@@ -1067,7 +1064,19 @@ style="display:none">
 
 
 <script>
+/* ================= APPWRITE ================= */
 
+const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
+const APPWRITE_PROJECT_ID = "6a81eba700101af16c1d";
+
+const appwriteClient = new Appwrite.Client();
+
+appwriteClient
+.setEndpoint(APPWRITE_ENDPOINT)
+.setProject(APPWRITE_PROJECT_ID);
+
+const appwriteStorage =
+new Appwrite.Storage(appwriteClient);
 
 /* ================= BUTTON EFFECT ================= */
 
