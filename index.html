@@ -2526,128 +2526,80 @@ renderVoteHistory();
 
 function showResults(poll){
 
-const result =
+const result=
 document.getElementById(
 "result_"+poll.id
 );
 
-if(!result)
-return;
+if(result) result.innerHTML="";
 
 let votes;
 
 try{
 
-votes =
+votes=
 JSON.parse(
 localStorage.getItem(
 "votes_"+poll.id
 )
-);
-
-if(
-!Array.isArray(votes) ||
-votes.length!==poll.options.length
-){
-
-votes =
-poll.options.map(()=>0);
-
-}
+)||poll.options.map(()=>0);
 
 }catch(e){
 
-votes =
-poll.options.map(()=>0);
+votes=poll.options.map(()=>0);
 
 }
 
+const total=
+votes.reduce((a,b)=>a+b,0);
 
-const total =
-votes.reduce(
-(a,b)=>
-a+(Number(b)||0),
-0
-);
+if(total===0)return;
 
-if(total===0){
-
-result.innerHTML="";
-
-return;
-
-}
-
-
-const percentages =
+const percentages=
 votes.map(v=>
-Math.round(
-((Number(v)||0)/total)*100
-)
+Math.round((v/total)*100)
 );
 
+poll.options.forEach((raw,index)=>{
 
-let html=`
+const option=
+document.querySelector(
+`input[name="${poll.id}"][value="${index}"]`
+)?.closest(".poll-option");
 
-<div class="result-title">
-نتایج رأی‌گیری
-</div>
+if(!option)return;
 
-`;
+const percent=percentages[index];
 
+option.style.background=
+`linear-gradient(
+to right,
+#225A45 ${percent}%,
+#fff ${percent}%
+)`;
 
-poll.options.forEach(
-(raw,index)=>{
+option.style.color=
+percent>50?"#fff":"#222";
 
-const option =
+const text=
+option.querySelector(
+".poll-option-text"
+);
+
+if(text){
+
+text.innerHTML=
+`${escapeHTML(
 typeof raw==="string"
-?
-raw
-:
-(raw?.text||"");
+?raw
+:raw.text
+)} <strong>${percent}%</strong>`;
 
-
-html+=`
-
-<div class="result-row">
-
-<div class="result-label">
-
-<span>
-${escapeHTML(option)}
-</span>
-
-<span>
-${percentages[index]}%
-</span>
-
-</div>
-
-<div class="bar">
-
-<div
-class="bar-fill"
-style="width:${percentages[index]}%">
-
-<span class="result-percent">
-${percentages[index]}%
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-`;
+}
 
 });
 
-
-result.innerHTML=html;
-
 }
-
 
 /* ================= CLOSED ================= */
 
