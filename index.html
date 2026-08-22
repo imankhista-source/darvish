@@ -3442,24 +3442,35 @@ return;
 const options=[];
 
 
-rows.forEach(row=>{
+for(const row of rows){
 
-const text=
+const text =
 row.querySelector(
 ".admin-option"
 ).value.trim();
 
-const image=
+const imageFile =
 row.querySelector(
-".admin-option-image"
-).value.trim();
+".admin-option-image-file"
+).files[0];
 
-const video=
+const videoFile =
 row.querySelector(
-".admin-option-video"
-).value.trim();
+".admin-option-video-file"
+).files[0];
 
 if(text){
+
+let image = "";
+let video = "";
+
+if(imageFile){
+    image = await uploadToAppwrite(imageFile);
+}
+
+if(videoFile){
+    video = await uploadToAppwrite(videoFile);
+}
 
 options.push({
 
@@ -3471,10 +3482,7 @@ video:video
 
 }
 
-});
-
-
-if(options.length<2){
+}
 
 message.innerText=
 "حداقل دو گزینه لازم است.";
@@ -3867,7 +3875,6 @@ function escapeAttr(value){
 
 return escapeHTML(value);
 /* ================= APPWRITE UPLOAD ================= */
-
 async function uploadToAppwrite(file){
 
 if(!file)
@@ -3882,7 +3889,13 @@ Appwrite.ID.unique(),
 file
 );
 
-return result.$id;
+const fileUrl =
+appwriteStorage.getFileView(
+APPWRITE_BUCKET_ID,
+result.$id
+);
+
+return fileUrl.toString();
 
 }catch(error){
 
@@ -3890,14 +3903,13 @@ console.error("Appwrite upload error:",error);
 
 alert(
 "آپلود فایل انجام نشد.\n"+
-"لطفاً تنظیمات Storage در Appwrite را بررسی کنید."
+"لطفاً دسترسی‌های Storage در Appwrite را بررسی کنید."
 );
 
 return "";
 
 }
 
-}
 }
 
 
