@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -1929,7 +1931,7 @@ if(!page)
 return;
 
 page.classList.add("active");
-localStorage.setItem("didgahLastPage", id);
+
 window.scrollTo({
 top:0,
 behavior:"smooth"
@@ -1953,15 +1955,7 @@ page=1
 
 currentCategory=category;
 currentPollPage=page;
-localStorage.setItem(
-"didgahLastCategory",
-category
-);
 
-localStorage.setItem(
-"didgahLastPollPage",
-page
-);
 showPage("pollPage");
 
 document.getElementById(
@@ -2534,80 +2528,128 @@ renderVoteHistory();
 
 function showResults(poll){
 
-const result=
+const result =
 document.getElementById(
 "result_"+poll.id
 );
 
-if(result) result.innerHTML="";
+if(!result)
+return;
 
 let votes;
 
 try{
 
-votes=
+votes =
 JSON.parse(
 localStorage.getItem(
 "votes_"+poll.id
 )
-)||poll.options.map(()=>0);
+);
+
+if(
+!Array.isArray(votes) ||
+votes.length!==poll.options.length
+){
+
+votes =
+poll.options.map(()=>0);
+
+}
 
 }catch(e){
 
-votes=poll.options.map(()=>0);
+votes =
+poll.options.map(()=>0);
 
 }
 
-const total=
-votes.reduce((a,b)=>a+b,0);
 
-if(total===0)return;
+const total =
+votes.reduce(
+(a,b)=>
+a+(Number(b)||0),
+0
+);
 
-const percentages=
+if(total===0){
+
+result.innerHTML="";
+
+return;
+
+}
+
+
+const percentages =
 votes.map(v=>
-Math.round((v/total)*100)
+Math.round(
+((Number(v)||0)/total)*100
+)
 );
 
-poll.options.forEach((raw,index)=>{
 
-const option=
-document.querySelector(
-`input[name="${poll.id}"][value="${index}"]`
-)?.closest(".poll-option");
+let html=`
 
-if(!option)return;
+<div class="result-title">
+نتایج رأی‌گیری
+</div>
 
-const percent=percentages[index];
+`;
 
-option.style.background=
-`linear-gradient(
-to right,
-#225A45 ${percent}%,
-#fff ${percent}%
-)`;
 
-option.style.color=
-percent>50?"#fff":"#222";
+poll.options.forEach(
+(raw,index)=>{
 
-const text=
-option.querySelector(
-".poll-option-text"
-);
-
-if(text){
-
-text.innerHTML=
-`${escapeHTML(
+const option =
 typeof raw==="string"
-?raw
-:raw.text
-)} <strong>${percent}%</strong>`;
+?
+raw
+:
+(raw?.text||"");
 
-}
+
+html+=`
+
+<div class="result-row">
+
+<div class="result-label">
+
+<span>
+${escapeHTML(option)}
+</span>
+
+<span>
+${percentages[index]}%
+</span>
+
+</div>
+
+<div class="bar">
+
+<div
+class="bar-fill"
+style="width:${percentages[index]}%">
+
+<span class="result-percent">
+${percentages[index]}%
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+`;
 
 });
 
+
+result.innerHTML=html;
+
 }
+
 
 /* ================= CLOSED ================= */
 
@@ -4987,14 +5029,12 @@ syncParticipantCounts();
 
 loadAccount();
 
-
 initAdmin();
 
 renderAdminLists();
 
 restorePendingVote();
 
-}
 </script>
 
 </body>
