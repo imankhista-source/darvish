@@ -1953,7 +1953,15 @@ page=1
 
 currentCategory=category;
 currentPollPage=page;
+localStorage.setItem(
+"didgahLastCategory",
+category
+);
 
+localStorage.setItem(
+"didgahLastPollPage",
+page
+);
 showPage("pollPage");
 
 document.getElementById(
