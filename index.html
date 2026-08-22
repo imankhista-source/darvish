@@ -172,6 +172,7 @@ margin-top:10px;
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="file"],
 select,
 textarea{
 
@@ -354,6 +355,38 @@ border-radius:10px;
 padding:10px;
 margin-top:5px;
 margin-bottom:8px;
+}
+
+.upload-box{
+background:#f8f9fa;
+border:1px dashed #ccc;
+border-radius:10px;
+padding:10px;
+margin-top:5px;
+margin-bottom:10px;
+}
+
+.upload-btn{
+background:#e9ecef;
+color:#222;
+width:100%;
+margin-top:5px;
+}
+
+.upload-status{
+font-size:12px;
+color:#777;
+margin-top:6px;
+display:none;
+line-height:1.7;
+}
+
+.upload-status.success{
+color:#225A45;
+}
+
+.upload-status.error{
+color:#c00000;
 }
 
 
@@ -566,7 +599,8 @@ margin:20px 0;
 مشاهده نظرسنجی‌های بسته‌شده و نتیجه نهایی آن‌ها.
 </p>
 
-<button class="primary-btn" onclick="openClosedPolls()">
+<button class="primary-btn"
+onclick="openClosedPolls()">
 نظرسنجی‌های قبلی / بسته‌شده
 </button>
 
@@ -934,21 +968,57 @@ placeholder="سؤال نظرسنجی را بنویسید"></textarea>
 
 
 <label class="media-label">
-🖼️ آدرس عکس سؤال
+🖼️ عکس سؤال
 </label>
+
+<div class="upload-box">
+
+<input type="file"
+id="adminQuestionImageFile"
+accept="image/*">
+
+<button type="button"
+class="upload-btn"
+onclick="uploadQuestionImage()">
+آپلود عکس سؤال
+</button>
+
+<div id="questionImageUploadStatus"
+class="upload-status">
+</div>
 
 <input type="text"
 id="adminQuestionImage"
-placeholder="https://example.com/image.jpg">
+placeholder="یا آدرس عکس را وارد کنید">
+
+</div>
 
 
 <label class="media-label">
-🎬 آدرس فیلم سؤال
+🎬 فیلم سؤال
 </label>
+
+<div class="upload-box">
+
+<input type="file"
+id="adminQuestionVideoFile"
+accept="video/*">
+
+<button type="button"
+class="upload-btn"
+onclick="uploadQuestionVideo()">
+آپلود فیلم سؤال
+</button>
+
+<div id="questionVideoUploadStatus"
+class="upload-status">
+</div>
 
 <input type="text"
 id="adminQuestionVideo"
-placeholder="https://example.com/video.mp4">
+placeholder="یا آدرس فیلم را وارد کنید">
+
+</div>
 
 
 <label>مدت نظرسنجی</label>
@@ -1022,7 +1092,29 @@ style="display:none">
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0"></script>
+
 <script>
+<!--
+قسمت ۲ دقیقاً از اینجا ادامه پیدا می‌کند.
+هیچ خطی را حذف یا جابه‌جا نکن.
+-->
+<script src="https://cdn.jsdelivr.net/npm/appwrite@17.0.0"></script>
+
+<script>
+
+/* ================= APPWRITE ================= */
+
+const client = new Appwrite.Client();
+
+client
+.setEndpoint("https://fra.cloud.appwrite.io/v1")
+.setProject("6a81eba700101af16c1d");
+
+const account = new Appwrite.Account(client);
+const storage = new Appwrite.Storage(client);
+
+const STORAGE_BUCKET_ID = "DIDGAH-MEDIA";
 
 
 /* ================= BUTTON EFFECT ================= */
@@ -1919,8 +2011,6 @@ ${escapeHTML(poll.question)}
 `;
 
 
-/* QUESTION IMAGE */
-
 if(poll.questionImage){
 
 html+=`
@@ -1935,8 +2025,6 @@ onerror="this.style.display='none'">
 
 }
 
-
-/* QUESTION VIDEO */
 
 if(poll.questionVideo){
 
@@ -2150,10 +2238,12 @@ btn.classList.add("active");
 btn.innerText=i;
 
 btn.onclick=()=>{
+
 openPolls(
 currentCategory,
 i
 );
+
 };
 
 pagination.appendChild(btn);
@@ -2548,8 +2638,6 @@ let total=
 votes.reduce((a,b)=>a+b,0);
 
 
-/* نتیجه آزمایشی */
-
 if(total===0){
 
 votes=
@@ -2627,6 +2715,276 @@ container.innerHTML=html;
 }
 
 
+/* ================= APPWRITE FILE UPLOAD ================= */
+
+async function uploadFileToAppwrite(file,statusId){
+
+const status=
+document.getElementById(statusId);
+
+if(!file){
+
+if(status){
+
+status.innerText="لطفاً ابتدا یک فایل انتخاب کنید.";
+status.className="upload-status error";
+status.style.display="block";
+
+}
+
+return null;
+
+}
+
+
+if(status){
+
+status.className="upload-status";
+status.innerText="در حال آپلود فایل...";
+status.style.display="block";
+
+}
+
+
+try{
+
+const uploaded=
+await storage.createFile(
+STORAGE_BUCKET_ID,
+Appwrite.ID.unique(),
+file
+);
+
+
+const fileId=uploaded.$id;
+
+const url=
+"https://fra.cloud.appwrite.io/v1/storage/buckets/"
++encodeURIComponent(STORAGE_BUCKET_ID)
++"/files/"
++encodeURIComponent(fileId)
++"/view?project="
++encodeURIComponent("6a81eba700101af16c1d")
++"&mode=admin";
+
+
+if(status){
+
+status.className="upload-status success";
+status.innerText="فایل با موفقیت آپلود شد.";
+status.style.display="block";
+
+}
+
+return url;
+
+}catch(error){
+
+console.error(error);
+
+if(status){
+
+status.className="upload-status error";
+status.innerText=
+"خطا در آپلود فایل: "+
+(error.message||"خطای نامشخص");
+status.style.display="block";
+
+}
+
+return null;
+
+}
+
+
+/* ================= QUESTION IMAGE UPLOAD ================= */
+
+async function uploadQuestionImage(){
+
+const input=
+document.getElementById(
+"adminQuestionImageFile"
+);
+
+const file=
+input.files[0];
+
+const url=
+await uploadFileToAppwrite(
+file,
+"questionImageUploadStatus"
+);
+
+if(url){
+
+document.getElementById(
+"adminQuestionImage"
+).value=url;
+
+}
+
+}
+
+
+/* ================= QUESTION VIDEO UPLOAD ================= */
+
+async function uploadQuestionVideo(){
+
+const input=
+document.getElementById(
+"adminQuestionVideoFile"
+);
+
+const file=
+input.files[0];
+
+const url=
+await uploadFileToAppwrite(
+file,
+"questionVideoUploadStatus"
+);
+
+if(url){
+
+document.getElementById(
+"adminQuestionVideo"
+).value=url;
+
+}
+
+}
+
+
+/* ================= OPTION UPLOAD ================= */
+
+async function uploadOptionImage(button){
+
+const row=
+button.closest(".option-input-row");
+
+const input=
+row.querySelector(".admin-option-image-file");
+
+const status=
+row.querySelector(".option-image-upload-status");
+
+const file=
+input.files[0];
+
+const url=
+await uploadFileToAppwriteFromElements(
+file,
+status
+);
+
+if(url){
+
+row.querySelector(
+".admin-option-image"
+).value=url;
+
+}
+
+}
+
+
+async function uploadOptionVideo(button){
+
+const row=
+button.closest(".option-input-row");
+
+const input=
+row.querySelector(".admin-option-video-file");
+
+const status=
+row.querySelector(".option-video-upload-status");
+
+const file=
+input.files[0];
+
+const url=
+await uploadFileToAppwriteFromElements(
+file,
+status
+);
+
+if(url){
+
+row.querySelector(
+".admin-option-video"
+).value=url;
+
+}
+
+}
+
+
+async function uploadFileToAppwriteFromElements(file,status){
+
+if(!file){
+
+status.innerText=
+"لطفاً فایل را انتخاب کنید.";
+
+status.className=
+"upload-status error";
+
+status.style.display="block";
+
+return null;
+
+}
+
+
+status.className="upload-status";
+status.innerText="در حال آپلود...";
+status.style.display="block";
+
+
+try{
+
+const uploaded=
+await storage.createFile(
+STORAGE_BUCKET_ID,
+Appwrite.ID.unique(),
+file
+);
+
+const url=
+"https://fra.cloud.appwrite.io/v1/storage/buckets/"
++encodeURIComponent(STORAGE_BUCKET_ID)
++"/files/"
++encodeURIComponent(uploaded.$id)
++"/view?project="
++encodeURIComponent("6a81eba700101af16c1d")
++"&mode=admin";
+
+
+status.className=
+"upload-status success";
+
+status.innerText=
+"فایل با موفقیت آپلود شد.";
+
+return url;
+
+}catch(error){
+
+console.error(error);
+
+status.className=
+"upload-status error";
+
+status.innerText=
+"خطا در آپلود فایل.";
+
+return null;
+
+}
+
+}
+
+
 /* ================= ACCOUNT ================= */
 
 function showRegister(){
@@ -2640,7 +2998,9 @@ document.getElementById(
 }
 
 
-function register(){
+/* ================= REGISTER ================= */
+
+async function register(){
 
 const email=
 document.getElementById(
@@ -2662,8 +3022,9 @@ document.getElementById(
 "registerMessage"
 );
 
-
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(!email){
 
@@ -2676,6 +3037,7 @@ return;
 
 }
 
+
 if(!password){
 
 message.innerText=
@@ -2687,16 +3049,19 @@ return;
 
 }
 
-if(password.length<6){
+
+if(password.length<8){
 
 message.innerText=
-"رمز عبور باید حداقل ۶ کاراکتر باشد.";
+"رمز عبور باید حداقل ۸ کاراکتر باشد.";
 
+message.classList.add("error");
 message.style.display="block";
 
 return;
 
 }
+
 
 if(password!==password2){
 
@@ -2704,7 +3069,6 @@ message.innerText=
 "رمزهای عبور یکسان نیستند.";
 
 message.classList.add("error");
-
 message.style.display="block";
 
 return;
@@ -2712,19 +3076,18 @@ return;
 }
 
 
-localStorage.setItem(
-"registeredEmail",
-email
-);
+try{
 
-localStorage.setItem(
-"registeredPassword",
+await account.create(
+Appwrite.ID.unique(),
+email,
 password
 );
 
-localStorage.setItem(
-"didgahUser",
-email
+
+await account.createEmailPasswordSession(
+email,
+password
 );
 
 
@@ -2736,35 +3099,68 @@ message.innerText=
 message.style.display="block";
 
 
-setTimeout(()=>{
+setTimeout(async()=>{
 
-loadAccount();
+await loadAccount();
+
+const pending=
+localStorage.getItem("pendingVote");
+
 showPage("accountPage");
 
+
+if(pending){
+
+localStorage.removeItem("pendingVote");
+
+openPolls(
+findCategoryByPoll(pending)
+);
+
+}
+
 },700);
+
+
+}catch(error){
+
+console.error(error);
+
+message.classList.add("error");
+
+if(error.code===409){
+
+message.innerText=
+"این ایمیل قبلاً ثبت شده است.";
+
+}else{
+
+message.innerText=
+"خطا در ایجاد حساب: "+
+(error.message||"خطای نامشخص");
+
+}
+
+message.style.display="block";
+
+}
 
 }
 
 
-function login(){
+/* ================= LOGIN ================= */
+
+async function login(){
 
 const email=
-document.getElementById("email")
-.value.trim();
+document.getElementById(
+"email"
+).value.trim();
 
 const password=
-document.getElementById("password")
-.value;
-
-const registeredEmail=
-localStorage.getItem(
-"registeredEmail"
-);
-
-const registeredPassword=
-localStorage.getItem(
-"registeredPassword"
-);
+document.getElementById(
+"password"
+).value;
 
 const message=
 document.getElementById(
@@ -2772,16 +3168,13 @@ document.getElementById(
 );
 
 message.style.display="none";
+message.classList.remove("error");
 
-if(
-email!==registeredEmail ||
-password!==registeredPassword
-){
+
+if(!email){
 
 message.innerText=
-"ایمیل یا رمز عبور اشتباه است.";
-
-message.classList.add("error");
+"لطفاً ایمیل خود را وارد کنید.";
 
 message.style.display="block";
 
@@ -2790,7 +3183,25 @@ return;
 }
 
 
-message.classList.remove("error");
+if(!password){
+
+message.innerText=
+"لطفاً رمز عبور را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+try{
+
+await account.createEmailPasswordSession(
+email,
+password
+);
+
 
 localStorage.setItem(
 "didgahUser",
@@ -2798,36 +3209,73 @@ email
 );
 
 
-loadAccount();
+message.innerText=
+"ورود با موفقیت انجام شد.";
+
+message.style.display="block";
+
+
+await loadAccount();
 
 
 const pending=
-localStorage.getItem(
-"pendingVote"
-);
+localStorage.getItem("pendingVote");
 
 
 if(pending){
 
-localStorage.removeItem(
-"pendingVote"
-);
+localStorage.removeItem("pendingVote");
 
 openPolls(
 findCategoryByPoll(pending)
 );
 
-return;
-
-}
-
+}else{
 
 showPage("homePage");
 
 }
 
 
-function logout(){
+}catch(error){
+
+console.error(error);
+
+message.classList.add("error");
+
+if(error.code===401){
+
+message.innerText=
+"ایمیل یا رمز عبور اشتباه است.";
+
+}else{
+
+message.innerText=
+"خطا در ورود: "+
+(error.message||"خطای نامشخص");
+
+}
+
+message.style.display="block";
+
+}
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+async function logout(){
+
+try{
+
+await account.deleteSession("current");
+
+}catch(error){
+
+console.log("logout:",error);
+
+}
 
 localStorage.removeItem(
 "didgahUser"
@@ -2840,14 +3288,29 @@ showPage("homePage");
 }
 
 
-function loadAccount(){
+/* ================= LOAD ACCOUNT ================= */
 
-const user=
-localStorage.getItem(
-"didgahUser"
-);
+async function loadAccount(){
+
+let user=null;
+
+try{
+
+user=
+await account.get();
+
+}catch(error){
+
+user=null;
+
+}
+
 
 if(!user){
+
+localStorage.removeItem(
+"didgahUser"
+);
 
 document.getElementById(
 "loggedOut"
@@ -2861,6 +3324,11 @@ return;
 
 }
 
+
+localStorage.setItem(
+"didgahUser",
+user.email
+);
 
 document.getElementById(
 "loggedOut"
@@ -2872,7 +3340,7 @@ document.getElementById(
 
 document.getElementById(
 "userEmail"
-).innerText=user;
+).innerText=user.email;
 
 updateAccountCount();
 
@@ -2880,6 +3348,8 @@ renderVoteHistory();
 
 }
 
+
+/* ================= ACCOUNT COUNT ================= */
 
 function updateAccountCount(){
 
@@ -2898,6 +3368,8 @@ document.getElementById(
 
 }
 
+
+/* ================= VOTE HISTORY ================= */
 
 function renderVoteHistory(){
 
@@ -2983,6 +3455,8 @@ history.innerHTML=`
 }
 
 
+/* ================= ACCOUNT MESSAGE ================= */
+
 function showAccountMessage(text){
 
 const message=
@@ -2991,7 +3465,9 @@ document.getElementById(
 );
 
 message.innerText=text;
+
 message.classList.remove("error");
+
 message.style.display="block";
 
 }
@@ -2999,17 +3475,12 @@ message.style.display="block";
 
 /* ================= FORGOT PASSWORD ================= */
 
-function forgotPassword(){
+async function forgotPassword(){
 
 const email=
 document.getElementById(
 "forgotEmail"
 ).value.trim();
-
-const registered=
-localStorage.getItem(
-"registeredEmail"
-);
 
 const message=
 document.getElementById(
@@ -3017,6 +3488,8 @@ document.getElementById(
 );
 
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(!email){
 
@@ -3029,25 +3502,34 @@ return;
 
 }
 
-if(email!==registered){
+
+try{
+
+await account.createRecovery(
+email,
+window.location.origin
+);
+
 
 message.innerText=
-"حسابی با این ایمیل پیدا نشد.";
+"لینک بازیابی رمز عبور به ایمیل شما ارسال شد.";
+
+message.style.display="block";
+
+
+}catch(error){
+
+console.error(error);
 
 message.classList.add("error");
 
-message.style.display="block";
+message.innerText=
+"خطا در ارسال لینک بازیابی: "+
+(error.message||"خطای نامشخص");
 
-return;
+message.style.display="block";
 
 }
-
-message.classList.remove("error");
-
-message.innerText=
-"درخواست بازیابی رمز عبور ثبت شد.";
-
-message.style.display="block";
 
 }
 
@@ -3072,6 +3554,8 @@ document.getElementById(
 );
 
 message.style.display="none";
+message.classList.remove("error");
+
 
 if(
 email!==ADMIN_EMAIL ||
@@ -3089,7 +3573,6 @@ return;
 
 }
 
-message.classList.remove("error");
 
 localStorage.setItem(
 "didgahAdmin",
@@ -3104,6 +3587,8 @@ renderAdminLists();
 
 }
 
+
+/* ================= ADMIN LOGOUT ================= */
 
 function adminLogout(){
 
@@ -3133,6 +3618,8 @@ addAdminOption();
 }
 
 
+/* ================= ADD ADMIN OPTION ================= */
+
 function addAdminOption(){
 
 const container=
@@ -3160,22 +3647,53 @@ placeholder="گزینه ${index}">
 <div class="option-admin-media">
 
 <label class="media-label">
-🖼️ آدرس عکس این گزینه
+🖼️ عکس این گزینه
 </label>
+
+<input
+type="file"
+class="admin-option-image-file"
+accept="image/*">
+
+<button
+type="button"
+class="upload-btn"
+onclick="uploadOptionImage(this)">
+آپلود عکس گزینه
+</button>
+
+<div class="upload-status option-image-upload-status">
+</div>
 
 <input
 type="text"
 class="admin-option-image"
-placeholder="https://example.com/image.jpg">
+placeholder="یا آدرس عکس را وارد کنید">
+
 
 <label class="media-label">
-🎬 آدرس فیلم این گزینه
+🎬 فیلم این گزینه
 </label>
+
+<input
+type="file"
+class="admin-option-video-file"
+accept="video/*">
+
+<button
+type="button"
+class="upload-btn"
+onclick="uploadOptionVideo(this)">
+آپلود فیلم گزینه
+</button>
+
+<div class="upload-status option-video-upload-status">
+</div>
 
 <input
 type="text"
 class="admin-option-video"
-placeholder="https://example.com/video.mp4">
+placeholder="یا آدرس فیلم را وارد کنید">
 
 </div>
 
@@ -3198,7 +3716,7 @@ container.appendChild(row);
 
 /* ================= CREATE POLL ================= */
 
-function createPoll(){
+async function createPoll(){
 
 const category=
 document.getElementById(
@@ -3368,6 +3886,14 @@ document.getElementById(
 
 document.getElementById(
 "adminQuestionVideo"
+).value="";
+
+document.getElementById(
+"adminQuestionImageFile"
+).value="";
+
+document.getElementById(
+"adminQuestionVideoFile"
 ).value="";
 
 
@@ -3682,7 +4208,1226 @@ loadAccount();
 initAdmin();
 
 </script>
+/* ================= ACCOUNT ================= */
 
-</body>
+function showRegister(){
 
-</html>
+showPage("registerPage");
+
+document.getElementById(
+"registerMessage"
+).style.display="none";
+
+}
+
+
+/* ================= REGISTER ================= */
+
+async function register(){
+
+const email=
+document.getElementById(
+"registerEmail"
+).value.trim();
+
+const password=
+document.getElementById(
+"registerPassword"
+).value;
+
+const password2=
+document.getElementById(
+"registerPassword2"
+).value;
+
+const message=
+document.getElementById(
+"registerMessage"
+);
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+if(!email){
+
+message.innerText=
+"لطفاً ایمیل خود را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(!password){
+
+message.innerText=
+"لطفاً رمز عبور را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(password.length<8){
+
+message.innerText=
+"رمز عبور باید حداقل ۸ کاراکتر باشد.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
+if(password!==password2){
+
+message.innerText=
+"رمزهای عبور یکسان نیستند.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
+
+
+try{
+
+await account.create(
+Appwrite.ID.unique(),
+email,
+password
+);
+
+
+await account.createEmailPasswordSession(
+email,
+password
+);
+
+
+message.classList.remove("error");
+
+message.innerText=
+"حساب با موفقیت ایجاد شد.";
+
+message.style.display="block";
+
+
+setTimeout(async()=>{
+
+await loadAccount();
+
+const pending=
+localStorage.getItem("pendingVote");
+
+showPage("accountPage");
+
+
+if(pending){
+
+localStorage.removeItem("pendingVote");
+
+openPolls(
+findCategoryByPoll(pending)
+);
+
+}
+
+},700);
+
+
+}catch(error){
+
+console.error(error);
+
+message.classList.add("error");
+
+if(error.code===409){
+
+message.innerText=
+"این ایمیل قبلاً ثبت شده است.";
+
+}else{
+
+message.innerText=
+"خطا در ایجاد حساب: "+
+(error.message||"خطای نامشخص");
+
+}
+
+message.style.display="block";
+
+}
+
+}
+
+
+/* ================= LOGIN ================= */
+
+async function login(){
+
+const email=
+document.getElementById(
+"email"
+).value.trim();
+
+const password=
+document.getElementById(
+"password"
+).value;
+
+const message=
+document.getElementById(
+"accountMessage"
+);
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+if(!email){
+
+message.innerText=
+"لطفاً ایمیل خود را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(!password){
+
+message.innerText=
+"لطفاً رمز عبور را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+try{
+
+await account.createEmailPasswordSession(
+email,
+password
+);
+
+
+localStorage.setItem(
+"didgahUser",
+email
+);
+
+
+message.innerText=
+"ورود با موفقیت انجام شد.";
+
+message.style.display="block";
+
+
+await loadAccount();
+
+
+const pending=
+localStorage.getItem("pendingVote");
+
+
+if(pending){
+
+localStorage.removeItem("pendingVote");
+
+openPolls(
+findCategoryByPoll(pending)
+);
+
+}else{
+
+showPage("homePage");
+
+}
+
+
+}catch(error){
+
+console.error(error);
+
+message.classList.add("error");
+
+if(error.code===401){
+
+message.innerText=
+"ایمیل یا رمز عبور اشتباه است.";
+
+}else{
+
+message.innerText=
+"خطا در ورود: "+
+(error.message||"خطای نامشخص");
+
+}
+
+message.style.display="block";
+
+}
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+async function logout(){
+
+try{
+
+await account.deleteSession("current");
+
+}catch(error){
+
+console.log("logout:",error);
+
+}
+
+localStorage.removeItem(
+"didgahUser"
+);
+
+loadAccount();
+
+showPage("homePage");
+
+}
+
+
+/* ================= LOAD ACCOUNT ================= */
+
+async function loadAccount(){
+
+let user=null;
+
+try{
+
+user=
+await account.get();
+
+}catch(error){
+
+user=null;
+
+}
+
+
+if(!user){
+
+localStorage.removeItem(
+"didgahUser"
+);
+
+document.getElementById(
+"loggedOut"
+).style.display="block";
+
+document.getElementById(
+"loggedIn"
+).style.display="none";
+
+return;
+
+}
+
+
+localStorage.setItem(
+"didgahUser",
+user.email
+);
+
+document.getElementById(
+"loggedOut"
+).style.display="none";
+
+document.getElementById(
+"loggedIn"
+).style.display="block";
+
+document.getElementById(
+"userEmail"
+).innerText=user.email;
+
+updateAccountCount();
+
+renderVoteHistory();
+
+}
+
+
+/* ================= ACCOUNT COUNT ================= */
+
+function updateAccountCount(){
+
+let count=0;
+
+Object.keys(localStorage).forEach(key=>{
+
+if(key.startsWith("voted_"))
+count++;
+
+});
+
+document.getElementById(
+"voteCount"
+).innerText=count;
+
+}
+
+
+/* ================= VOTE HISTORY ================= */
+
+function renderVoteHistory(){
+
+const history=
+document.getElementById(
+"voteHistory"
+);
+
+history.innerHTML="";
+
+let count=0;
+
+
+Object.keys(localStorage).forEach(key=>{
+
+if(!key.startsWith("voted_"))
+return;
+
+count++;
+
+const id=
+key.replace("voted_","");
+
+const poll=findPollById(id);
+
+if(!poll)return;
+
+const category=
+findCategoryByPoll(id);
+
+const index=
+parseInt(localStorage.getItem(key));
+
+const option=
+typeof poll.options[index]==="string"
+?
+poll.options[index]
+:
+poll.options[index]?.text;
+
+
+history.innerHTML+=`
+
+<div class="status">
+
+<strong>
+${escapeHTML(category)}
+</strong>
+
+<div style="margin-top:5px;font-size:14px;">
+${escapeHTML(poll.question)}
+</div>
+
+<div class="small"
+style="margin-top:5px;">
+
+انتخاب شما:
+<strong>
+${escapeHTML(option||"")}
+</strong>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+if(count===0){
+
+history.innerHTML=`
+
+<div class="status">
+هنوز هیچ رأیی ثبت نکرده‌اید.
+</div>
+
+`;
+
+}
+
+}
+
+
+/* ================= ACCOUNT MESSAGE ================= */
+
+function showAccountMessage(text){
+
+const message=
+document.getElementById(
+"accountMessage"
+);
+
+message.innerText=text;
+
+message.classList.remove("error");
+
+message.style.display="block";
+
+}
+
+
+/* ================= FORGOT PASSWORD ================= */
+
+async function forgotPassword(){
+
+const email=
+document.getElementById(
+"forgotEmail"
+).value.trim();
+
+const message=
+document.getElementById(
+"forgotMessage"
+);
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+if(!email){
+
+message.innerText=
+"لطفاً ایمیل را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+try{
+
+await account.createRecovery(
+email,
+window.location.origin
+);
+
+
+message.innerText=
+"لینک بازیابی رمز عبور به ایمیل شما ارسال شد.";
+
+message.style.display="block";
+
+
+}catch(error){
+
+console.error(error);
+
+message.classList.add("error");
+
+message.innerText=
+"خطا در ارسال لینک بازیابی: "+
+(error.message||"خطای نامشخص");
+
+message.style.display="block";
+
+}
+
+}
+
+
+/* ================= ADMIN LOGIN ================= */
+
+function adminLogin(){
+
+const email=
+document.getElementById(
+"adminEmail"
+).value.trim();
+
+const password=
+document.getElementById(
+"adminPassword"
+).value;
+
+const message=
+document.getElementById(
+"adminLoginMessage"
+);
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+if(
+email!==ADMIN_EMAIL ||
+password!==ADMIN_PASSWORD
+){
+
+message.innerText=
+"ایمیل یا رمز عبور مدیر اشتباه است.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+
+localStorage.setItem(
+"didgahAdmin",
+"true"
+);
+
+showPage("adminPage");
+
+initAdmin();
+
+renderAdminLists();
+
+}
+
+
+/* ================= ADMIN LOGOUT ================= */
+
+function adminLogout(){
+
+localStorage.removeItem(
+"didgahAdmin"
+);
+
+showPage("homePage");
+
+}
+
+
+/* ================= ADMIN OPTIONS ================= */
+
+function initAdmin(){
+
+const container=
+document.getElementById(
+"adminOptions"
+);
+
+container.innerHTML="";
+
+addAdminOption();
+addAdminOption();
+
+}
+
+
+/* ================= ADD ADMIN OPTION ================= */
+
+function addAdminOption(){
+
+const container=
+document.getElementById(
+"adminOptions"
+);
+
+const index=
+container.children.length+1;
+
+const row=
+document.createElement("div");
+
+row.className="option-input-row";
+
+row.innerHTML=`
+
+<div>
+
+<input
+type="text"
+class="admin-option"
+placeholder="گزینه ${index}">
+
+<div class="option-admin-media">
+
+<label class="media-label">
+🖼️ عکس این گزینه
+</label>
+
+<input
+type="file"
+class="admin-option-image-file"
+accept="image/*">
+
+<button
+type="button"
+class="upload-btn"
+onclick="uploadOptionImage(this)">
+آپلود عکس گزینه
+</button>
+
+<div class="upload-status option-image-upload-status">
+</div>
+
+<input
+type="text"
+class="admin-option-image"
+placeholder="یا آدرس عکس را وارد کنید">
+
+
+<label class="media-label">
+🎬 فیلم این گزینه
+</label>
+
+<input
+type="file"
+class="admin-option-video-file"
+accept="video/*">
+
+<button
+type="button"
+class="upload-btn"
+onclick="uploadOptionVideo(this)">
+آپلود فیلم گزینه
+</button>
+
+<div class="upload-status option-video-upload-status">
+</div>
+
+<input
+type="text"
+class="admin-option-video"
+placeholder="یا آدرس فیلم را وارد کنید">
+
+</div>
+
+</div>
+
+<button
+class="remove-option"
+onclick="this.parentElement.remove()">
+
+×
+
+</button>
+
+`;
+
+container.appendChild(row);
+
+}
+
+
+/* ================= CREATE POLL ================= */
+
+async function createPoll(){
+
+const category=
+document.getElementById(
+"adminCategory"
+).value;
+
+const question=
+document.getElementById(
+"adminQuestion"
+).value.trim();
+
+const duration=
+document.getElementById(
+"adminDuration"
+).value;
+
+const questionImage=
+document.getElementById(
+"adminQuestionImage"
+).value.trim();
+
+const questionVideo=
+document.getElementById(
+"adminQuestionVideo"
+).value.trim();
+
+const rows=
+document.querySelectorAll(
+"#adminOptions .option-input-row"
+);
+
+const message=
+document.getElementById(
+"adminCreateMessage"
+);
+
+message.style.display="none";
+message.classList.remove("error");
+
+
+if(!question){
+
+message.innerText=
+"لطفاً سؤال نظرسنجی را وارد کنید.";
+
+message.style.display="block";
+
+return;
+
+}
+
+
+const options=[];
+
+
+rows.forEach(row=>{
+
+const text=
+row.querySelector(
+".admin-option"
+).value.trim();
+
+const image=
+row.querySelector(
+".admin-option-image"
+).value.trim();
+
+const video=
+row.querySelector(
+".admin-option-video"
+).value.trim();
+
+if(text){
+
+options.push({
+
+text:text,
+image:image,
+video:video
+
+});
+
+}
+
+});
+
+
+if(options.length<2){
+
+message.innerText=
+"حداقل دو گزینه لازم است.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+
+if(options.length>10){
+
+message.innerText=
+"حداکثر ۱۰ گزینه مجاز است.";
+
+message.classList.add("error");
+
+message.style.display="block";
+
+return;
+
+}
+
+
+const start=
+new Date().toLocaleDateString(
+"fa-IR"
+);
+
+
+const poll={
+
+id:"admin_"+Date.now(),
+
+question:question,
+
+questionImage:questionImage,
+
+questionVideo:questionVideo,
+
+options:options,
+
+participants:0,
+
+start:start,
+
+duration:duration,
+
+active:true
+
+};
+
+
+if(!polls[category])
+polls[category]=[];
+
+
+polls[category].push(poll);
+
+saveCustomPolls();
+
+
+message.innerText=
+"نظرسنجی با موفقیت ایجاد شد.";
+
+message.style.display="block";
+
+
+document.getElementById(
+"adminQuestion"
+).value="";
+
+document.getElementById(
+"adminQuestionImage"
+).value="";
+
+document.getElementById(
+"adminQuestionVideo"
+).value="";
+
+document.getElementById(
+"adminQuestionImageFile"
+).value="";
+
+document.getElementById(
+"adminQuestionVideoFile"
+).value="";
+
+
+initAdmin();
+
+renderAdminLists();
+
+}
+
+
+/* ================= FIND POLL ================= */
+
+function findPollById(id){
+
+for(const category of Object.keys(polls)){
+
+const poll=
+polls[category].find(
+p=>p.id===id
+);
+
+if(poll)return poll;
+
+}
+
+return null;
+
+}
+
+
+function findCategoryByPoll(id){
+
+for(const category of Object.keys(polls)){
+
+if(
+polls[category].some(
+p=>p.id===id
+)
+)
+return category;
+
+}
+
+return "ورزش";
+
+}
+
+
+/* ================= DELETE ================= */
+
+function deletePoll(category,id){
+
+if(!confirm(
+"آیا از حذف این نظرسنجی مطمئن هستید؟"
+))
+return;
+
+
+polls[category]=
+polls[category].filter(
+p=>p.id!==id
+);
+
+saveCustomPolls();
+
+renderAdminLists();
+
+if(currentCategory===category)
+renderPolls();
+
+}
+
+
+/* ================= CLOSE ================= */
+
+function closePoll(category,id){
+
+const poll=findPollById(id);
+
+if(!poll)return;
+
+poll.active=false;
+
+saveCustomPolls();
+
+renderAdminLists();
+
+if(currentCategory===category)
+renderPolls();
+
+}
+
+
+/* ================= ADMIN TABS ================= */
+
+function showAdminTab(tab){
+
+const active=
+document.getElementById(
+"adminActiveSection"
+);
+
+const closed=
+document.getElementById(
+"adminClosedSection"
+);
+
+const activeTab=
+document.getElementById(
+"activeAdminTab"
+);
+
+const closedTab=
+document.getElementById(
+"closedAdminTab"
+);
+
+
+if(tab==="active"){
+
+active.style.display="block";
+closed.style.display="none";
+
+activeTab.classList.add("active");
+closedTab.classList.remove("active");
+
+}else{
+
+active.style.display="none";
+closed.style.display="block";
+
+activeTab.classList.remove("active");
+closedTab.classList.add("active");
+
+}
+
+renderAdminLists();
+
+}
+
+
+/* ================= ADMIN LISTS ================= */
+
+function renderAdminLists(){
+
+const activeList=
+document.getElementById(
+"adminActiveList"
+);
+
+const closedList=
+document.getElementById(
+"adminClosedList"
+);
+
+activeList.innerHTML="";
+closedList.innerHTML="";
+
+
+Object.keys(polls).forEach(category=>{
+
+polls[category].forEach(poll=>{
+
+const div=
+document.createElement("div");
+
+div.className="admin-poll";
+
+
+if(poll.active!==false){
+
+div.innerHTML=`
+
+<div class="admin-poll-title">
+${escapeHTML(poll.question)}
+</div>
+
+<div class="small">
+
+دسته:
+${escapeHTML(category)}
+
+<br>
+
+گزینه‌ها:
+${poll.options.length}
+
+<br>
+
+شرکت‌کنندگان:
+${poll.participants}
+
+</div>
+
+<button
+class="close-btn"
+onclick="closePoll(
+'${category}',
+'${poll.id}'
+)">
+بستن نظرسنجی
+</button>
+
+<button
+class="delete-btn"
+onclick="deletePoll(
+'${category}',
+'${poll.id}'
+)">
+حذف نظرسنجی
+</button>
+
+`;
+
+activeList.appendChild(div);
+
+}else{
+
+div.innerHTML=`
+
+<div class="admin-poll-title">
+${escapeHTML(poll.question)}
+</div>
+
+<div class="small">
+
+دسته:
+${escapeHTML(category)}
+
+<br>
+
+شرکت‌کنندگان:
+${poll.participants}
+
+</div>
+
+<button
+class="delete-btn"
+onclick="deletePoll(
+'${category}',
+'${poll.id}'
+)">
+حذف نظرسنجی
+</button>
+
+`;
+
+closedList.appendChild(div);
+
+}
+
+});
+
+});
+
+
+if(!activeList.children.length){
+
+activeList.innerHTML=`
+
+<div class="status">
+هیچ نظرسنجی فعالی وجود ندارد.
+</div>
+
+`;
+
+}
+
+
+if(!closedList.children.length){
+
+closedList.innerHTML=`
+
+<div class="status">
+هیچ نظرسنجی بسته‌شده‌ای وجود ندارد.
+</div>
+
+`;
+
+}
+
+}
+
+
+/* ================= SECURITY HELPERS ================= */
+
+function escapeHTML(value){
+
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttr(value){
+
+return escapeHTML(value);
+
+}
+
+
+/* ================= START ================= */
+
+loadCustomPolls();
+
+loadAccount();
+
+initAdmin();
+
+</script>
