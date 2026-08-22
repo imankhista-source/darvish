@@ -866,7 +866,7 @@ class="message">
 </div>
 
 </div>
-
+</section>
 <!-- ================= ADMIN LOGIN ================= -->
 
 <section id="adminLoginPage" class="page">
@@ -3496,10 +3496,10 @@ return;
 }
 
 
-if(options.length>10){
+if(options.length<2){
 
 message.innerText=
-"حداکثر ۱۰ گزینه مجاز است.";
+"حداقل دو گزینه لازم است.";
 
 message.classList.add("error");
 
@@ -3568,13 +3568,12 @@ document.getElementById(
 ).value="";
 
 document.getElementById(
-"adminQuestionImage"
+"adminQuestionImageFile"
 ).value="";
 
 document.getElementById(
-"adminQuestionVideo"
+"adminQuestionVideoFile"
 ).value="";
-
 
 initAdmin();
 
@@ -3874,7 +3873,12 @@ return String(value??"")
 function escapeAttr(value){
 
 return escapeHTML(value);
+
+}
+
+
 /* ================= APPWRITE UPLOAD ================= */
+
 async function uploadToAppwrite(file){
 
 if(!file)
@@ -3911,8 +3915,6 @@ return "";
 }
 
 }
-
-
 /* ================= START ================= */
 
 loadCustomPolls();
