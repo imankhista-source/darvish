@@ -3386,8 +3386,7 @@ container.appendChild(row);
 
 
 /* ================= CREATE POLL ================= */
-
-function createPoll(){
+async function createPoll(){
 
 const category=
 document.getElementById(
@@ -3404,15 +3403,15 @@ document.getElementById(
 "adminDuration"
 ).value;
 
-const questionImage=
+const questionImageFile =
 document.getElementById(
-"adminQuestionImage"
-).value.trim();
+"adminQuestionImageFile"
+).files[0];
 
-const questionVideo=
+const questionVideoFile =
 document.getElementById(
-"adminQuestionVideo"
-).value.trim();
+"adminQuestionVideoFile"
+).files[0];
 
 const rows=
 document.querySelectorAll(
@@ -3507,7 +3506,16 @@ const start=
 new Date().toLocaleDateString(
 "fa-IR"
 );
+let questionImage = "";
+let questionVideo = "";
 
+if(questionImageFile){
+    questionImage = await uploadToAppwrite(questionImageFile);
+}
+
+if(questionVideoFile){
+    questionVideo = await uploadToAppwrite(questionVideoFile);
+}
 
 const poll={
 
@@ -3858,7 +3866,38 @@ return String(value??"")
 function escapeAttr(value){
 
 return escapeHTML(value);
+/* ================= APPWRITE UPLOAD ================= */
 
+async function uploadToAppwrite(file){
+
+if(!file)
+return "";
+
+try{
+
+const result =
+await appwriteStorage.createFile(
+APPWRITE_BUCKET_ID,
+Appwrite.ID.unique(),
+file
+);
+
+return result.$id;
+
+}catch(error){
+
+console.error("Appwrite upload error:",error);
+
+alert(
+"آپلود فایل انجام نشد.\n"+
+"لطفاً تنظیمات Storage در Appwrite را بررسی کنید."
+);
+
+return "";
+
+}
+
+}
 }
 
 
