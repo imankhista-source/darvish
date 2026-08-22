@@ -1929,7 +1929,7 @@ if(!page)
 return;
 
 page.classList.add("active");
-
+localStorage.setItem("didgahLastPage", id);
 window.scrollTo({
 top:0,
 behavior:"smooth"
@@ -4984,7 +4984,12 @@ initAdmin();
 renderAdminLists();
 
 restorePendingVote();
+const lastPage =
+localStorage.getItem("didgahLastPage");
 
+if(lastPage){
+showPage(lastPage);
+}
 </script>
 
 </body>
