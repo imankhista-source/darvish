@@ -1290,53 +1290,7 @@ active:true
 ]
 
 };
-/* ================= DELETED POLLS ================= */
 
-function getDeletedPollIds(){
-
-const saved =
-localStorage.getItem("deletedPolls");
-
-if(!saved)
-return [];
-
-try{
-
-const deleted =
-JSON.parse(saved);
-
-return Array.isArray(deleted)
-? deleted
-: [];
-
-}catch(e){
-
-return [];
-
-}
-
-}
-
-
-function applyDeletedPolls(){
-
-const deleted =
-getDeletedPollIds();
-
-if(!deleted.length)
-return;
-
-Object.keys(polls)
-.forEach(category=>{
-
-polls[category] =
-polls[category].filter(
-poll=>!deleted.includes(poll.id)
-);
-
-});
-
-}
 
 /* ================= CUSTOM POLLS ================= */
 
@@ -1626,18 +1580,6 @@ ${voted!==null?"disabled":""}>
 <span class="poll-option-text">
 ${escapeHTML(option.text)}
 </span>
-
-<div class="poll-option-result">
-
-<div class="poll-option-result-fill">
-
-<span class="poll-option-result-percent">
-0%
-</span>
-
-</div>
-
-</div>
 
 `;
 
@@ -2035,6 +1977,14 @@ renderVoteHistory();
 
 function showResults(poll){
 
+const result =
+document.getElementById(
+"result_"+poll.id
+);
+
+if(!result)
+return;
+
 let votes;
 
 try{
@@ -2071,8 +2021,13 @@ a+(Number(b)||0),
 0
 );
 
-if(total===0)
+if(total===0){
+
+result.innerHTML="";
+
 return;
+
+}
 
 
 const percentages =
@@ -2083,56 +2038,64 @@ Math.round(
 );
 
 
-const card =
-document.querySelector(
-`input[name="${CSS.escape(poll.id)}"]`
-)?.closest(".poll-card");
+let html=`
 
-if(!card)
-return;
+<div class="result-title">
+نتایج رأی‌گیری
+</div>
 
-
-const options =
-card.querySelectorAll(".poll-option");
+`;
 
 
-options.forEach(
-(option,index)=>{
+poll.options.forEach(
+(raw,index)=>{
 
-const result =
-option.querySelector(
-".poll-option-result"
-);
-
-const fill =
-option.querySelector(
-".poll-option-result-fill"
-);
-
-const percent =
-option.querySelector(
-".poll-option-result-percent"
-);
-
-if(
-!result ||
-!fill ||
-!percent
-)
-return;
+const option =
+typeof raw==="string"
+?
+raw
+:
+(raw?.text||"");
 
 
-result.style.display="block";
+html+=`
 
-fill.style.width =
-percentages[index]+"%";
+<div class="result-row">
 
-percent.innerText =
-percentages[index]+"%";
+<div class="result-label">
 
-}
+<span>
+${escapeHTML(option)}
+</span>
 
-);
+<span>
+${percentages[index]}%
+</span>
+
+</div>
+
+<div class="bar">
+
+<div
+class="bar-fill"
+style="width:${percentages[index]}%">
+
+<span class="result-percent">
+${percentages[index]}%
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+result.innerHTML=html;
 
 }
 
@@ -3806,23 +3769,6 @@ if(
 return;
 
 
-const deleted =
-getDeletedPollIds();
-
-if(
-!deleted.includes(id)
-){
-
-deleted.push(id);
-
-localStorage.setItem(
-"deletedPolls",
-JSON.stringify(deleted)
-);
-
-}
-
-
 polls[category] =
 polls[category].filter(
 p=>p.id!==id
@@ -4526,8 +4472,6 @@ normalizePollData();
 
 loadCustomPolls();
 
-applyDeletedPolls();
-
 normalizePollData();
 
 syncParticipantCounts();
@@ -4537,6 +4481,10 @@ loadAccount();
 initAdmin();
 
 renderAdminLists();
+
+restorePendingVote();
+
+</script>
 
 </body>
 
