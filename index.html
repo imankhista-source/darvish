@@ -1983,6 +1983,10 @@ html+=`
 
 <div class="poll-result-option">
 
+${
+(!option.image && !option.video)
+?
+`
 <div
 class="poll-result-fill"
 style="width:${percentages[index]}%">
@@ -1992,6 +1996,10 @@ ${percentages[index]}%
 </span>
 
 </div>
+`
+:
+""
+}
 
 <div class="poll-result-label">
 
