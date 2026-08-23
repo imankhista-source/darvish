@@ -99,6 +99,8 @@ padding:12px;
 margin-top:6px;
 font-size:13px;
 line-height:2;
+text-align:left;
+direction:ltr;
 }
 
 .contact-box.open{
@@ -728,10 +730,22 @@ Gmail: imankhista@gmail.com
 برای مدیریت حساب و ثبت رأی وارد حساب خود شوید.
 </p>
 
+<div style="display:flex;align-items:center;gap:10px;">
+
 <button class="account-btn"
-onclick="showPage('accountPage')">
+onclick="showPage('accountPage')"
+style="flex:1;">
 ورود / حساب کاربری
 </button>
+
+<button
+class="menu-button"
+onclick="toggleMenu()"
+style="position:relative;left:auto;top:auto;transform:none;flex:0 0 42px;">
+⋯
+</button>
+
+</div>
 
 </div>
 
