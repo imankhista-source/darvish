@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -646,8 +648,7 @@ margin:20px 0;
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/appwrite@20.0.0"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
-<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+
 </head>
 
 
@@ -1161,8 +1162,7 @@ placeholder="سؤال نظرسنجی را بنویسید"></textarea>
 <input
 type="file"
 id="adminQuestionImageFile"
-accept="image/*"
-onchange="openImageEditor(this)">
+accept="image/*">
 
 <label class="media-label">
 🎬 فیلم سؤال
@@ -1243,158 +1243,10 @@ style="display:none">
 <footer>
 دیدگاه © 2026
 </footer>
-<div
-id="imageEditorModal"
-style="
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.75);
-z-index:9999;
-padding:20px;
-">
 
-<div
-style="
-background:#fff;
-max-width:650px;
-width:100%;
-margin:auto;
-border-radius:16px;
-padding:15px;
-max-height:95vh;
-overflow:auto;">
-
-<h3 style="margin-bottom:12px;">
-ویرایش عکس
-</h3>
-
-<div
-style="
-width:100%;
-max-height:55vh;
-overflow:hidden;
-background:#f1f3f5;">
-
-<img
-id="imageEditorPreview"
-style="
-display:block;
-max-width:100%;
-width:100%;">
-
-</div>
-
-<div
-style="
-display:flex;
-gap:8px;
-margin-top:15px;">
-
-<button
-type="button"
-class="primary-btn"
-style="flex:1;"
-onclick="applyImageEdit()">
-
-تأیید و ذخیره
-
-</button>
-
-<button
-type="button"
-style="flex:1;background:#eee;"
-onclick="closeImageEditor()">
-
-انصراف
-
-</button>
-
-</div>
-
-</div>
-
-</div>
 
 <script>
-/* ================= IMAGE EDITOR ================= */
 
-let imageEditor = null;
-let imageEditorInput = null;
-
-function openImageEditor(input){
-
-if(!input || !input.files || !input.files[0])
-return;
-
-const file = input.files[0];
-
-if(!file.type.startsWith("image/"))
-return;
-
-imageEditorInput = input;
-
-const preview =
-document.getElementById("imageEditorPreview");
-
-const modal =
-document.getElementById("imageEditorModal");
-
-const reader = new FileReader();
-
-reader.onload = function(e){
-
-preview.src = e.target.result;
-
-modal.style.display = "block";
-
-if(imageEditor)
-imageEditor.destroy();
-
-imageEditor =
-new Cropper(
-preview,
-{
-viewMode:1,
-autoCropArea:.9,
-responsive:true,
-background:false
-}
-);
-
-};
-
-reader.readAsDataURL(file);
-
-}
-function openImageEditor(input){
-
-    // کد مرحله ۲
-
-    reader.readAsDataURL(file);
-
-}
-
-
-/* اینجا کد مرحله ۴ را قرار بده */
-
-
-function applyImageEdit(){
-
-    // ...
-
-}
-
-function closeImageEditor(){
-
-    // ...
-
-}
-
-
-/* ================= APPWRITE ================= */
-
-const APPWRITE_ENDPOINT =
 /* ================= APPWRITE ================= */
 
 const APPWRITE_ENDPOINT =
