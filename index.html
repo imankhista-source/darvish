@@ -369,7 +369,37 @@ font-weight:bold;
 direction:rtl;
 z-index:3;
 }
+.poll-result-media-bar{
+height:32px;
+background:#e9ecef;
+border-radius:10px;
+overflow:hidden;
+position:relative;
+direction:ltr;
+margin:10px 0 0;
+}
 
+.poll-result-media-fill{
+height:100%;
+background:#225A45;
+width:0%;
+transition:width .7s ease;
+margin-left:0;
+margin-right:auto;
+border-radius:10px;
+position:relative;
+}
+
+.poll-result-media-percent{
+position:absolute;
+left:10px;
+top:50%;
+transform:translateY(-50%);
+color:#fff;
+font-size:12px;
+font-weight:bold;
+direction:rtl;
+}
 .vote-button{
 margin-top:10px;
 }
@@ -2010,7 +2040,27 @@ src="${escapeAttr(option.video)}">
 `;
 
 }
+if(option.image || option.video){
 
+html+=`
+
+<div class="poll-result-media-bar">
+
+<div
+class="poll-result-media-fill"
+style="width:${percentages[index]}%">
+
+<span class="poll-result-media-percent">
+${percentages[index]}%
+</span>
+
+</div>
+
+</div>
+
+`;
+
+}
 
 html+=`
 
