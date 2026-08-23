@@ -627,11 +627,6 @@ margin:20px 0;
 
 <header>
 
-<button
-class="menu-button"
-onclick="toggleMenu()">
-⋯
-</button>
 
 <div
 id="menuDropdown"
@@ -739,9 +734,10 @@ style="flex:1;">
 </button>
 
 <button
+type="button"
 class="menu-button"
-onclick="toggleMenu()"
-style="position:relative;left:auto;top:auto;transform:none;flex:0 0 42px;">
+onclick="toggleMenu(); event.stopPropagation();"
+style="position:relative;left:auto;top:auto;transform:none;flex:0 0 42px;width:42px;height:42px;">
 ⋯
 </button>
 
