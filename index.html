@@ -747,7 +747,8 @@ style="flex:1;">
 type="button"
 class="menu-button"
 onclick="toggleMenu(); event.stopPropagation();"
-style="position:relative;left:auto;top:auto;transform:none;flex:0 0 42px;width:42px;height:42px;margin-top:10px;"
+style="position:relative;left:auto;top:auto;transform:none;flex:0 0 42px;width:42px;height:42px;"
+>
 ⋯
 </button>
 
@@ -1955,6 +1956,16 @@ html+=`
 
 <div class="poll-result-option">
 
+<div
+class="poll-result-fill"
+style="width:${percentages[index]}%">
+
+<span class="poll-result-fill-percent">
+${percentages[index]}%
+</span>
+
+</div>
+
 <div class="poll-result-label">
 
 <span>
@@ -1966,20 +1977,7 @@ ${percentages[index]}%
 </span>
 
 </div>
-
-<div class="poll-result-bar">
-
-<div
-class="poll-result-fill"
-style="width:${percentages[index]}%">
-
-<span class="poll-result-fill-percent">
-${percentages[index]}%
-</span>
-
-</div>
-
-</div>
+`;
 
 `;
 
