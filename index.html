@@ -327,17 +327,18 @@ border-radius:12px;
 background:#fff;
 overflow:hidden;
 position:relative;
+min-height:52px;
 }
 
 .poll-result-label{
+position:relative;
+z-index:2;
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:13px 14px;
 font-size:14px;
 line-height:1.7;
-position:relative;
-z-index:2;
 }
 
 .poll-result-percent{
@@ -346,20 +347,15 @@ margin-right:10px;
 white-space:nowrap;
 }
 
-.poll-result-bar{
-height:32px;
-background:#e9ecef;
-position:relative;
-direction:ltr;
-}
-
 .poll-result-fill{
+position:absolute;
+right:0;
+top:0;
 height:100%;
 background:#225A45;
 width:0%;
 transition:width .7s ease;
-margin-left:0;
-margin-right:auto;
+z-index:1;
 }
 
 .poll-result-fill-percent{
@@ -371,6 +367,7 @@ color:#fff;
 font-size:12px;
 font-weight:bold;
 direction:rtl;
+z-index:3;
 }
 
 .vote-button{
