@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -41,6 +39,73 @@ header p{
 font-size:13px;
 color:#777;
 }
+
+/* ================= MENU ================= */
+
+.menu-button{
+position:absolute;
+left:15px;
+top:50%;
+transform:translateY(-50%);
+width:42px;
+height:42px;
+padding:0;
+background:#f1f3f5;
+color:#222;
+font-size:24px;
+line-height:42px;
+border-radius:12px;
+z-index:20;
+}
+
+.menu-dropdown{
+display:none;
+position:absolute;
+left:15px;
+top:68px;
+width:230px;
+background:#fff;
+border-radius:14px;
+padding:10px;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+text-align:right;
+}
+
+.menu-dropdown.open{
+display:block;
+}
+
+.menu-item{
+display:block;
+width:100%;
+background:#f8f9fa;
+color:#222;
+text-align:right;
+margin:5px 0;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+}
+
+.menu-item:hover{
+background:#eef0f2;
+}
+
+.contact-box{
+display:none;
+background:#f1f3f5;
+border-radius:10px;
+padding:12px;
+margin-top:6px;
+font-size:13px;
+line-height:2;
+}
+
+.contact-box.open{
+display:block;
+}
+
+/* ================= GENERAL ================= */
 
 .container{
 width:92%;
@@ -123,19 +188,11 @@ margin-right:auto;
 margin-left:0;
 }
 
-.account-btn,
-.admin-btn{
+.account-btn{
+background:#222;
 color:#fff;
 width:100%;
 margin-top:10px;
-}
-
-.account-btn{
-background:#222;
-}
-
-.admin-btn{
-background:#333;
 }
 
 .link-btn{
@@ -254,6 +311,64 @@ pointer-events:none;
 .poll-option-text{
 pointer-events:none;
 line-height:1.8;
+}
+
+/* ================= INLINE RESULTS ================= */
+
+.poll-result-option{
+display:block;
+width:100%;
+padding:0;
+margin:10px 0;
+border:1px solid #ddd;
+border-radius:12px;
+background:#fff;
+overflow:hidden;
+position:relative;
+}
+
+.poll-result-label{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:13px 14px;
+font-size:14px;
+line-height:1.7;
+position:relative;
+z-index:2;
+}
+
+.poll-result-percent{
+font-weight:bold;
+margin-right:10px;
+white-space:nowrap;
+}
+
+.poll-result-bar{
+height:32px;
+background:#e9ecef;
+position:relative;
+direction:ltr;
+}
+
+.poll-result-fill{
+height:100%;
+background:#225A45;
+width:0%;
+transition:width .7s ease;
+margin-left:0;
+margin-right:auto;
+}
+
+.poll-result-fill-percent{
+position:absolute;
+left:10px;
+top:50%;
+transform:translateY(-50%);
+color:#fff;
+font-size:12px;
+font-weight:bold;
+direction:rtl;
 }
 
 .vote-button{
@@ -510,6 +625,50 @@ margin:20px 0;
 
 <header>
 
+<button
+class="menu-button"
+onclick="toggleMenu()">
+⋯
+</button>
+
+<div
+id="menuDropdown"
+class="menu-dropdown">
+
+<button
+class="menu-item"
+onclick="menuOpenClosed()">
+نظرسنجی‌های قبلی / بسته‌شده
+</button>
+
+<button
+class="menu-item"
+onclick="menuOpenAdmin()">
+ورود به مدیریت
+</button>
+
+<button
+class="menu-item"
+onclick="toggleContact()">
+ارتباط با ما
+</button>
+
+<div
+id="contactBox"
+class="contact-box">
+
+<div>
+Insta: Darvish3.ansari
+</div>
+
+<div>
+Gmail: imankhista@gmail.com
+</div>
+
+</div>
+
+</div>
+
 <p>دیدگاه شما، دیدگاه جامعه</p>
 
 </header>
@@ -563,21 +722,6 @@ margin:20px 0;
 
 <div class="card">
 
-<h2>نظرسنجی‌های قبلی</h2>
-
-<p class="small">
-مشاهده نظرسنجی‌های بسته‌شده و نتیجه نهایی آن‌ها.
-</p>
-
-<button class="primary-btn" onclick="openClosedPolls()">
-نظرسنجی‌های قبلی / بسته‌شده
-</button>
-
-</div>
-
-
-<div class="card">
-
 <h2>حساب کاربری</h2>
 
 <p class="small">
@@ -587,22 +731,6 @@ margin:20px 0;
 <button class="account-btn"
 onclick="showPage('accountPage')">
 ورود / حساب کاربری
-</button>
-
-</div>
-
-
-<div class="card">
-
-<h2>مدیریت</h2>
-
-<p class="small">
-مدیریت و ایجاد نظرسنجی‌ها.
-</p>
-
-<button class="admin-btn"
-onclick="showPage('adminLoginPage')">
-ورود به مدیریت
 </button>
 
 </div>
@@ -1133,6 +1261,98 @@ button.classList.remove("pressed");
 );
 
 
+/* ================= MENU ================= */
+
+function toggleMenu(){
+
+const menu =
+document.getElementById(
+"menuDropdown"
+);
+
+if(!menu)
+return;
+
+menu.classList.toggle("open");
+
+}
+
+
+function closeMenu(){
+
+const menu =
+document.getElementById(
+"menuDropdown"
+);
+
+if(menu)
+menu.classList.remove("open");
+
+}
+
+
+function toggleContact(){
+
+const box =
+document.getElementById(
+"contactBox"
+);
+
+if(!box)
+return;
+
+box.classList.toggle("open");
+
+}
+
+
+function menuOpenClosed(){
+
+closeMenu();
+
+openClosedPolls();
+
+}
+
+
+function menuOpenAdmin(){
+
+closeMenu();
+
+showPage("adminLoginPage");
+
+}
+
+
+document.addEventListener(
+"click",
+function(e){
+
+const menu =
+document.getElementById(
+"menuDropdown"
+);
+
+const button =
+document.querySelector(
+".menu-button"
+);
+
+if(
+menu &&
+!menu.contains(e.target) &&
+button &&
+!button.contains(e.target)
+){
+
+menu.classList.remove("open");
+
+}
+
+}
+);
+
+
 /* ================= ADMIN LOGIN ================= */
 
 const ADMIN_EMAIL =
@@ -1148,42 +1368,27 @@ const polls={
 
 "ورزش":[
 
-
 ],
-
 
 "فرهنگ":[
 
-
 ],
-
 
 "اقتصاد":[
 
-
 ],
-
 
 "سیاست":[
 
-
-
 ],
-
 
 "طبیعت":[
 
-
-
 ],
-
 
 "هنر":[
 
-
-
 ],
-
 
 "علم":[
 
@@ -1380,11 +1585,104 @@ if(!page)
 return;
 
 page.classList.add("active");
-localStorage.setItem("currentPage", id);
+
+localStorage.setItem(
+"currentPage",
+id
+);
+
 window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
+}
+
+
+function restoreCurrentPage(){
+
+const savedPage =
+localStorage.getItem(
+"currentPage"
+);
+
+if(!savedPage)
+return;
+
+
+if(savedPage==="pollPage"){
+
+const category =
+localStorage.getItem(
+"currentCategory"
+);
+
+const savedPollPage =
+parseInt(
+localStorage.getItem(
+"currentPollPage"
+),
+10
+)||1;
+
+if(
+category &&
+polls[category]
+){
+
+openPolls(
+category,
+savedPollPage
+);
+
+return;
+
+}
+
+showPage("homePage");
+
+return;
+
+}
+
+
+if(savedPage==="adminPage"){
+
+if(
+localStorage.getItem(
+"didgahAdmin"
+)==="true"
+){
+
+showPage("adminPage");
+initAdmin();
+renderAdminLists();
+
+return;
+
+}
+
+showPage("homePage");
+
+return;
+
+}
+
+
+if(document.getElementById(savedPage)){
+
+showPage(savedPage);
+
+if(savedPage==="accountPage")
+loadAccount();
+
+if(savedPage==="adminLoginPage")
+renderAdminLists();
+
+if(savedPage==="closedPage")
+openClosedPolls();
+
+}
 
 }
 
@@ -1405,6 +1703,16 @@ page=1
 currentCategory=category;
 currentPollPage=page;
 
+localStorage.setItem(
+"currentCategory",
+category
+);
+
+localStorage.setItem(
+"currentPollPage",
+String(page)
+);
+
 showPage("pollPage");
 
 document.getElementById(
@@ -1424,6 +1732,7 @@ document.getElementById(
 );
 
 container.innerHTML="";
+
 let list=(polls[currentCategory]||[])
 .filter(p=>p.active!==false)
 .slice()
@@ -1439,6 +1748,11 @@ list.length/POLLS_PER_PAGE
 
 if(currentPollPage>totalPages)
 currentPollPage=totalPages;
+
+localStorage.setItem(
+"currentPollPage",
+String(currentPollPage)
+);
 
 const start =
 (currentPollPage-1)*
@@ -1547,6 +1861,57 @@ ${escapeHTML(poll.duration||"")}
 `;
 
 
+/* ================= INLINE VOTE RESULTS ================= */
+
+if(voted!==null){
+
+let votes;
+
+try{
+
+votes =
+JSON.parse(
+localStorage.getItem(
+"votes_"+poll.id
+)
+);
+
+if(
+!Array.isArray(votes) ||
+votes.length!==poll.options.length
+){
+
+votes =
+poll.options.map(()=>0);
+
+}
+
+}catch(e){
+
+votes =
+poll.options.map(()=>0);
+
+}
+
+const total =
+votes.reduce(
+(a,b)=>
+a+(Number(b)||0),
+0
+);
+
+const percentages =
+total>0
+?
+votes.map(v=>
+Math.round(
+((Number(v)||0)/total)*100
+)
+)
+:
+poll.options.map(()=>0);
+
+
 poll.options.forEach(
 (raw,index)=>{
 
@@ -1568,14 +1933,122 @@ video:""
 
 html+=`
 
-<label class="poll-option
-${voted!==null?"disabled":""}">
+<div class="poll-result-option">
+
+<div class="poll-result-label">
+
+<span>
+${escapeHTML(option.text)}
+</span>
+
+<span class="poll-result-percent">
+${percentages[index]}%
+</span>
+
+</div>
+
+<div class="poll-result-bar">
+
+<div
+class="poll-result-fill"
+style="width:${percentages[index]}%">
+
+<span class="poll-result-fill-percent">
+${percentages[index]}%
+</span>
+
+</div>
+
+</div>
+
+`;
+
+
+if(option.image){
+
+html+=`
+
+<img
+src="${escapeAttr(option.image)}"
+class="option-media"
+alt=""
+onerror="this.style.display='none'">
+
+`;
+
+}
+
+
+if(option.video){
+
+html+=`
+
+<video
+class="option-media"
+controls
+playsinline>
+
+<source
+src="${escapeAttr(option.video)}">
+
+</video>
+
+`;
+
+}
+
+
+html+=`
+
+</div>
+
+`;
+
+});
+
+
+html+=`
+
+<button
+class="primary-btn vote-button"
+disabled>
+
+رأی ثبت شده است
+
+</button>
+
+`;
+
+}else{
+
+
+poll.options.forEach(
+(raw,index)=>{
+
+const option =
+typeof raw==="string"
+?
+{
+text:raw,
+image:"",
+video:""
+}
+:
+(raw||{
+text:"",
+image:"",
+video:""
+});
+
+
+html+=`
+
+<label class="poll-option">
 
 <input
 type="radio"
 name="${escapeAttr(poll.id)}"
-value="${index}"
-${voted!==null?"disabled":""}>
+value="${index}">
 
 <span class="poll-option-text">
 ${escapeHTML(option.text)}
@@ -1632,34 +2105,20 @@ html+=`
 <button
 class="primary-btn vote-button"
 id="voteBtn_${escapeAttr(poll.id)}"
-onclick="submitVote('${escapeJS(poll.id)}')"
-${voted!==null?"disabled":""}>
+onclick="submitVote('${escapeJS(poll.id)}')">
 
-${
-voted!==null
-?
-"رأی ثبت شده است"
-:
-"ثبت رأی"
-}
+ثبت رأی
 
 </button>
 
-<div
-id="result_${escapeAttr(poll.id)}"
-class="result">
-</div>
-
 `;
+
+}
 
 
 div.innerHTML=html;
 
 container.appendChild(div);
-
-
-if(voted!==null)
-showResults(poll);
 
 }
 
@@ -1852,7 +2311,7 @@ localStorage.getItem(
 )!==null
 ){
 
-showResults(poll);
+renderPolls();
 
 return;
 
@@ -1934,37 +2393,9 @@ JSON.stringify(votes)
 );
 
 
-document.querySelectorAll(
-`input[name="${CSS.escape(id)}"]`
-).forEach(input=>{
+/* نمایش مستقیم درصدها روی همان گزینه‌ها */
 
-input.disabled=true;
-
-const option =
-input.closest(".poll-option");
-
-if(option)
-option.classList.add("disabled");
-
-});
-
-
-const button =
-document.getElementById(
-"voteBtn_"+id
-);
-
-if(button){
-
-button.disabled=true;
-
-button.innerText =
-"رأی ثبت شده است";
-
-}
-
-
-showResults(poll);
+renderPolls();
 
 updateAccountCount();
 
@@ -1977,125 +2408,13 @@ renderVoteHistory();
 
 function showResults(poll){
 
-const result =
-document.getElementById(
-"result_"+poll.id
-);
+/*
+نتایج رأی بعد از ثبت رأی
+مستقیماً داخل همان گزینه‌ها
+نمایش داده می‌شوند.
+*/
 
-if(!result)
-return;
-
-let votes;
-
-try{
-
-votes =
-JSON.parse(
-localStorage.getItem(
-"votes_"+poll.id
-)
-);
-
-if(
-!Array.isArray(votes) ||
-votes.length!==poll.options.length
-){
-
-votes =
-poll.options.map(()=>0);
-
-}
-
-}catch(e){
-
-votes =
-poll.options.map(()=>0);
-
-}
-
-
-const total =
-votes.reduce(
-(a,b)=>
-a+(Number(b)||0),
-0
-);
-
-if(total===0){
-
-result.innerHTML="";
-
-return;
-
-}
-
-
-const percentages =
-votes.map(v=>
-Math.round(
-((Number(v)||0)/total)*100
-)
-);
-
-
-let html=`
-
-<div class="result-title">
-نتایج رأی‌گیری
-</div>
-
-`;
-
-
-poll.options.forEach(
-(raw,index)=>{
-
-const option =
-typeof raw==="string"
-?
-raw
-:
-(raw?.text||"");
-
-
-html+=`
-
-<div class="result-row">
-
-<div class="result-label">
-
-<span>
-${escapeHTML(option)}
-</span>
-
-<span>
-${percentages[index]}%
-</span>
-
-</div>
-
-<div class="bar">
-
-<div
-class="bar-fill"
-style="width:${percentages[index]}%">
-
-<span class="result-percent">
-${percentages[index]}%
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-
-result.innerHTML=html;
+renderPolls();
 
 }
 
@@ -3706,6 +4025,8 @@ createButton.innerText =
 }
 
 }
+
+
 /* ================= FIND POLL ================= */
 
 function findPollById(id){
@@ -3773,6 +4094,33 @@ polls[category] =
 polls[category].filter(
 p=>p.id!==id
 );
+
+
+/* حذف کامل اطلاعات محلی مربوط به نظرسنجی */
+
+localStorage.removeItem(
+"voted_"+id
+);
+
+localStorage.removeItem(
+"votes_"+id
+);
+
+localStorage.removeItem(
+"participantCount_"+id
+);
+
+if(
+localStorage.getItem(
+"pendingVote"
+)===id
+){
+
+localStorage.removeItem(
+"pendingVote"
+);
+
+}
 
 
 saveCustomPolls();
@@ -4169,6 +4517,7 @@ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 
 /* ================= APPWRITE UPLOAD ================= */
+
 async function uploadToAppwrite(file){
 
 if(!file)
@@ -4201,12 +4550,18 @@ return fileUrl.toString();
 
 }catch(error){
 
-console.error("========== APPWRITE UPLOAD ERROR ==========");
+console.error(
+"========== APPWRITE UPLOAD ERROR =========="
+);
+
 console.error("Code:", error.code);
 console.error("Type:", error.type);
 console.error("Message:", error.message);
 console.error("Full error:", error);
-console.error("===========================================");
+
+console.error(
+"==========================================="
+);
 
 alert(
 "خطای واقعی آپلود:\n\n"+
@@ -4220,6 +4575,8 @@ return "";
 }
 
 }
+
+
 /* ================= LOCAL STORAGE CLEANUP ================= */
 
 function syncParticipantCounts(){
@@ -4483,6 +4840,16 @@ initAdmin();
 renderAdminLists();
 
 restorePendingVote();
+
+/* بازیابی همان صفحه بعد از Refresh */
+
+if(
+!localStorage.getItem("pendingVote")
+){
+
+restoreCurrentPage();
+
+}
 
 </script>
 
