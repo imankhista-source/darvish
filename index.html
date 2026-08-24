@@ -1791,6 +1791,8 @@ page=1
 currentCategory=category;
 currentPollPage=page;
 
+markVisiblePollsSeen();
+
 localStorage.setItem(
 "currentCategory",
 category
@@ -4267,16 +4269,13 @@ localStorage.getItem("seenPolls_"+user)
 )||[];
 }catch(e){}
 
-document.querySelectorAll("#pollList .poll-card").forEach(card=>{
+(polls[currentCategory]||[]).forEach(poll=>{
 
-const voteButton=card.querySelector(".vote-button");
-
-if(!voteButton) return;
-
-const id=voteButton.id.replace("voteBtn_","");
-
-if(id&&!seen.includes(id))
-seen.push(id);
+if(
+poll.active!==false &&
+!seen.includes(poll.id)
+)
+seen.push(poll.id);
 
 });
 
