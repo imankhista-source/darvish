@@ -4177,7 +4177,100 @@ return "ورزش";
 
 }
 
+function findCategoryByPoll(id){
 
+for(
+const category
+of Object.keys(polls)
+){
+
+if(
+polls[category].some(
+p=>p.id===id
+)
+){
+
+return category;
+
+}
+
+}
+
+return "ورزش";
+
+}
+
+
+/* اینجا قرار بده */
+
+function updateNewPollBadges(){
+
+const user=localStorage.getItem("didgahUser");
+
+Object.keys(polls).forEach(category=>{
+
+const badge=document.getElementById("badge-"+category);
+
+if(!badge) return;
+
+if(!user){
+badge.style.display="none";
+return;
+}
+
+let seen=[];
+
+try{
+seen=JSON.parse(
+localStorage.getItem("seenPolls_"+user)
+)||[];
+}catch(e){}
+
+const count=(polls[category]||[]).filter(
+poll=>poll.active!==false&&!seen.includes(poll.id)
+).length;
+
+badge.innerText=count;
+badge.style.display=count?"block":"none";
+
+});
+
+}
+function markVisiblePollsSeen(){
+
+const user=localStorage.getItem("didgahUser");
+
+if(!user) return;
+
+let seen=[];
+
+try{
+seen=JSON.parse(
+localStorage.getItem("seenPolls_"+user)
+)||[];
+}catch(e){}
+
+document.querySelectorAll("#pollList .poll-card").forEach(card=>{
+
+const voteButton=card.querySelector(".vote-button");
+
+if(!voteButton) return;
+
+const id=voteButton.id.replace("voteBtn_","");
+
+if(id&&!seen.includes(id))
+seen.push(id);
+
+});
+
+localStorage.setItem(
+"seenPolls_"+user,
+JSON.stringify(seen)
+);
+
+updateNewPollBadges();
+
+}
 /* ================= DELETE ================= */
 
 function deletePoll(
@@ -4937,7 +5030,7 @@ normalizePollData();
 syncParticipantCounts();
 
 loadAccount();
-
+updateNewPollBadges();
 initAdmin();
 
 renderAdminLists();
