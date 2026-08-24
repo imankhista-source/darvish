@@ -2049,18 +2049,6 @@ ${percentages[index]}%
 ${escapeHTML(option.text)}
 </span>
 
-${
-(!option.image && !option.video)
-?
-`
-<span class="poll-result-percent">
-${percentages[index]}%
-</span>
-`
-:
-""
-}
-
 </div>
 
 `;
