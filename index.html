@@ -3046,12 +3046,42 @@ localStorage.removeItem(
 "pendingVote"
 );
 
-const category =
-findCategoryByPoll(
-pending
-);
+const poll =
+findPollById(pending);
+
+if(poll){
+
+let category="";
+
+Object.keys(polls).forEach(cat=>{
+
+if(
+polls[cat].some(
+p=>p.id===pending
+)
+){
+
+category=cat;
+
+}
+
+});
+
+if(category){
 
 openPolls(category);
+
+}else{
+
+showPage("accountPage");
+
+}
+
+}else{
+
+showPage("accountPage");
+
+}
 
 }else{
 
@@ -3170,14 +3200,36 @@ localStorage.removeItem(
 "pendingVote"
 );
 
-const category =
-findCategoryByPoll(
-pending
-);
+const poll =
+findPollById(pending);
+
+if(poll){
+
+let category="";
+
+Object.keys(polls).forEach(cat=>{
+
+if(
+polls[cat].some(
+p=>p.id===pending
+)
+){
+
+category=cat;
+
+}
+
+});
+
+if(category){
 
 openPolls(category);
 
 return;
+
+}
+
+}
 
 }
 
@@ -3317,8 +3369,21 @@ findPollById(id);
 if(!poll)
 return;
 
-const category =
-findCategoryByPoll(id);
+let category="";
+
+Object.keys(polls).forEach(cat=>{
+
+if(
+polls[cat].some(
+p=>p.id===id
+)
+){
+
+category=cat;
+
+}
+
+});
 
 const index =
 parseInt(
