@@ -3261,13 +3261,7 @@ showPage("homePage");
 
 }
 
-
-function loadAccount(){
-
-const user =
-localStorage.getItem(
-"didgahUser"
-);
+async function loadAccount(){
 
 const loggedOut =
 document.getElementById(
@@ -3282,8 +3276,32 @@ document.getElementById(
 if(!loggedOut || !loggedIn)
 return;
 
+try{
 
-if(!user){
+const user =
+await appwriteAccount.get();
+
+localStorage.setItem(
+"didgahUser",
+user.$id
+);
+
+loggedOut.style.display="none";
+loggedIn.style.display="block";
+
+document.getElementById(
+"userEmail"
+).innerText=user.email;
+
+updateAccountCount();
+
+renderVoteHistory();
+
+}catch(error){
+
+localStorage.removeItem(
+"didgahUser"
+);
 
 loggedOut.style.display="block";
 loggedIn.style.display="none";
@@ -3296,21 +3314,7 @@ document.getElementById(
 if(history)
 history.innerHTML="";
 
-return;
-
 }
-
-
-loggedOut.style.display="none";
-loggedIn.style.display="block";
-
-document.getElementById(
-"userEmail"
-).innerText=user;
-
-updateAccountCount();
-
-renderVoteHistory();
 
 }
 
