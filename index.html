@@ -2898,6 +2898,16 @@ message.style.display="none";
 message.classList.remove("error");
 
 }
+function isValidPassword(password){
+
+return (
+password.length >= 8 &&
+/[A-Za-z]/.test(password) &&
+/[0-9]/.test(password)
+);
+
+}
+
 
 async function register(){
 
@@ -2961,15 +2971,15 @@ return;
 
 }
 
+if(!isValidPassword(password)){
 
-if(password.length<8){
+message.innerText =
+"رمز عبور باید حداقل ۸ کاراکتر و شامل حداقل یک حرف انگلیسی و یک عدد باشد.";
 
-message.innerText="رمز عبور باید حداقل ۸ کاراکتر باشد.";
 message.classList.add("error");
 message.style.display="block";
 
 return;
-
 
 }
 
@@ -3544,10 +3554,10 @@ return;
 }
 
 
-if(newPassword.length<6){
+if(!isValidPassword(newPassword)){
 
 message.innerText =
-"رمز عبور جدید باید حداقل ۶ کاراکتر باشد.";
+"رمز عبور جدید باید حداقل ۸ کاراکتر و شامل حداقل یک حرف انگلیسی و یک عدد باشد.";
 
 message.classList.add("error");
 message.style.display="block";
@@ -3555,7 +3565,6 @@ message.style.display="block";
 return;
 
 }
-
 
 if(newPassword!==newPassword2){
 
