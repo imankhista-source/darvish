@@ -2898,8 +2898,7 @@ message.classList.remove("error");
 
 }
 
-
-function register(){
+async function register(){
 
 const email =
 document.getElementById(
@@ -2988,47 +2987,48 @@ return;
 }
 
 
-const oldEmail =
-localStorage.getItem(
-"registeredEmail"
+const button =
+document.querySelector(
+"#registerPage .primary-btn"
 );
 
-if(
-oldEmail &&
-oldEmail!==email
-){
+if(button){
 
-message.innerText =
-"در این نسخه آزمایشی یک حساب محلی از قبل ثبت شده است.";
-
-message.classList.add("error");
-message.style.display="block";
-
-return;
+button.disabled=true;
+button.innerText="در حال ثبت‌نام...";
 
 }
 
 
-localStorage.setItem(
-"registeredEmail",
-email
-);
+try{
 
-localStorage.setItem(
-"registeredPassword",
+const user =
+await appwriteAccount.create(
+Appwrite.ID.unique(),
+email,
 password
 );
 
-localStorage.setItem(
-"didgahUser",
-email
+
+/* ایجاد Session برای ورود خودکار */
+
+await appwriteAccount.createEmailPasswordSession(
+email,
+password
 );
 
 
 message.innerText =
 "حساب با موفقیت ایجاد شد.";
 
+message.classList.remove("error");
 message.style.display="block";
+
+
+localStorage.setItem(
+"didgahUser",
+user.$id
+);
 
 
 setTimeout(()=>{
@@ -3060,6 +3060,42 @@ showPage("accountPage");
 }
 
 },700);
+
+
+}catch(error){
+
+console.error(
+"Register error:",
+error
+);
+
+if(error.code===409){
+
+message.innerText =
+"این ایمیل قبلاً ثبت شده است.";
+
+}else{
+
+message.innerText =
+error.message ||
+"ثبت‌نام انجام نشد.";
+
+}
+
+message.classList.add("error");
+message.style.display="block";
+
+
+}finally{
+
+if(button){
+
+button.disabled=false;
+button.innerText="ثبت‌نام";
+
+}
+
+}
 
 }
 
@@ -4233,30 +4269,6 @@ return poll;
 }
 
 return null;
-
-}
-
-
-function findCategoryByPoll(id){
-
-for(
-const category
-of Object.keys(polls)
-){
-
-if(
-polls[category].some(
-p=>p.id===id
-)
-){
-
-return category;
-
-}
-
-}
-
-return "ورزش";
 
 }
 
