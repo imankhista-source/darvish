@@ -1319,7 +1319,8 @@ new Appwrite.Client();
 appwriteClient
 .setEndpoint(APPWRITE_ENDPOINT)
 .setProject(APPWRITE_PROJECT_ID);
-
+const appwriteAccount =
+new Appwrite.Account(appwriteClient);
 const appwriteStorage =
 new Appwrite.Storage(appwriteClient);
 
@@ -3009,7 +3010,6 @@ email,
 password
 );
 
-
 /* ایجاد Session برای ورود خودکار */
 
 await appwriteAccount.createEmailPasswordSession(
@@ -3130,7 +3130,7 @@ button.innerText="ثبت‌نام";
 }
 
 
-function login(){
+async function login(){
 
 const email =
 document.getElementById(
@@ -3141,16 +3141,6 @@ const password =
 document.getElementById(
 "password"
 ).value;
-
-const registeredEmail =
-localStorage.getItem(
-"registeredEmail"
-);
-
-const registeredPassword =
-localStorage.getItem(
-"registeredPassword"
-);
 
 const message =
 document.getElementById(
@@ -3163,13 +3153,11 @@ message.classList.remove("error");
 
 if(
 !email ||
-!password ||
-email!==registeredEmail ||
-password!==registeredPassword
+!password
 ){
 
 message.innerText =
-"ایمیل یا رمز عبور اشتباه است.";
+"لطفاً ایمیل و رمز عبور را وارد کنید.";
 
 message.classList.add("error");
 message.style.display="block";
@@ -3177,6 +3165,15 @@ message.style.display="block";
 return;
 
 }
+
+
+try{
+
+const session =
+await appwriteAccount.createEmailPasswordSession(
+email,
+password
+);
 
 
 localStorage.setItem(
@@ -3205,23 +3202,8 @@ findPollById(pending);
 
 if(poll){
 
-let category="";
-
-Object.keys(polls).forEach(cat=>{
-
-if(
-polls[cat].some(
-p=>p.id===pending
-)
-){
-
-category=cat;
-
-}
-
-});
-
-if(category){
+const category =
+findCategoryByPoll(pending);
 
 openPolls(category);
 
@@ -3231,15 +3213,43 @@ return;
 
 }
 
-}
-
 
 showPage("homePage");
 
+
+}catch(error){
+
+console.error(
+"Login error:",
+error
+);
+
+message.innerText =
+error.message ||
+"ایمیل یا رمز عبور اشتباه است.";
+
+message.classList.add("error");
+message.style.display="block";
+
+}
+
 }
 
 
-function logout(){
+async function logout(){
+
+try{
+
+await appwriteAccount.deleteSession("current");
+
+}catch(error){
+
+console.error(
+"Logout error:",
+error
+);
+
+}
 
 localStorage.removeItem(
 "didgahUser"
@@ -3499,7 +3509,7 @@ box.style.display==="none"
 }
 
 
-function changePassword(){
+async function changePassword(){
 
 const oldPassword =
 document.getElementById(
@@ -3521,11 +3531,6 @@ document.getElementById(
 "changePasswordMessage"
 );
 
-const currentPassword =
-localStorage.getItem(
-"registeredPassword"
-);
-
 message.style.display="none";
 message.classList.remove("error");
 
@@ -3535,19 +3540,6 @@ if(!oldPassword){
 message.innerText =
 "لطفاً رمز عبور فعلی را وارد کنید.";
 
-message.style.display="block";
-
-return;
-
-}
-
-
-if(oldPassword!==currentPassword){
-
-message.innerText =
-"رمز عبور فعلی اشتباه است.";
-
-message.classList.add("error");
 message.style.display="block";
 
 return;
@@ -3607,11 +3599,12 @@ return;
 }
 
 
-localStorage.setItem(
-"registeredPassword",
-newPassword
-);
+try{
 
+await appwriteAccount.updatePassword(
+newPassword,
+oldPassword
+);
 
 message.innerText =
 "رمز عبور با موفقیت تغییر کرد.";
@@ -3632,22 +3625,34 @@ document.getElementById(
 "newPassword2"
 ).value="";
 
+
+}catch(error){
+
+console.error(
+"Change password error:",
+error
+);
+
+message.innerText =
+error.message ||
+"تغییر رمز عبور انجام نشد.";
+
+message.classList.add("error");
+message.style.display="block";
+
+}
+
 }
 
 
 /* ================= FORGOT PASSWORD ================= */
 
-function forgotPassword(){
+async function forgotPassword(){
 
 const email =
 document.getElementById(
 "forgotEmail"
 ).value.trim();
-
-const registered =
-localStorage.getItem(
-"registeredEmail"
-);
 
 const message =
 document.getElementById(
@@ -3670,9 +3675,7 @@ return;
 }
 
 
-if(
-!isValidEmail(email)
-){
+if(!isValidEmail(email)){
 
 message.innerText =
 "لطفاً یک ایمیل معتبر وارد کنید.";
@@ -3685,24 +3688,36 @@ return;
 }
 
 
-if(email!==registered){
+try{
+
+await appwriteAccount.createRecovery(
+email,
+window.location.origin+
+window.location.pathname
+);
 
 message.innerText =
-"حسابی با این ایمیل پیدا نشد.";
+"لینک بازیابی رمز عبور به ایمیل شما ارسال شد.";
+
+message.classList.remove("error");
+message.style.display="block";
+
+
+}catch(error){
+
+console.error(
+"Forgot password error:",
+error
+);
+
+message.innerText =
+error.message ||
+"ارسال لینک بازیابی انجام نشد.";
 
 message.classList.add("error");
 message.style.display="block";
 
-return;
-
 }
-
-
-message.innerText =
-"درخواست بازیابی رمز عبور ثبت شد.";
-
-message.classList.remove("error");
-message.style.display="block";
 
 }
 
@@ -4405,20 +4420,48 @@ if(!user) return;
 let seen=[];
 
 try{
+
 seen=JSON.parse(
 localStorage.getItem("seenPolls_"+user)
 )||[];
-}catch(e){}
 
-(polls[currentCategory]||[]).forEach(poll=>{
+}catch(e){
 
-if(
-poll.active!==false &&
-!seen.includes(poll.id)
+seen=[];
+
+}
+
+
+/* فقط نظرسنجی‌های صفحه فعلی دیده‌شده محسوب شوند */
+
+const list=(polls[currentCategory]||[])
+.filter(
+poll=>poll.active!==false
 )
+.slice()
+.reverse();
+
+const start =
+(currentPollPage-1)*
+POLLS_PER_PAGE;
+
+const visiblePolls =
+list.slice(
+start,
+start+POLLS_PER_PAGE
+);
+
+
+visiblePolls.forEach(poll=>{
+
+if(!seen.includes(poll.id)){
+
 seen.push(poll.id);
 
+}
+
 });
+
 
 localStorage.setItem(
 "seenPolls_"+user,
