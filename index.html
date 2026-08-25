@@ -2962,15 +2962,14 @@ return;
 }
 
 
-if(password.length<6){
+if(password.length<8){
 
-message.innerText =
-"رمز عبور باید حداقل ۶ کاراکتر باشد.";
-
+message.innerText="رمز عبور باید حداقل ۸ کاراکتر باشد.";
 message.classList.add("error");
 message.style.display="block";
 
 return;
+
 
 }
 
@@ -3025,10 +3024,6 @@ message.classList.remove("error");
 message.style.display="block";
 
 
-localStorage.setItem(
-"didgahUser",
-user.$id
-);
 
 
 setTimeout(()=>{
@@ -3176,10 +3171,6 @@ password
 );
 
 
-localStorage.setItem(
-"didgahUser",
-email
-);
 
 
 loadAccount();
@@ -3251,10 +3242,6 @@ error
 
 }
 
-localStorage.removeItem(
-"didgahUser"
-);
-
 loadAccount();
 
 showPage("homePage");
@@ -3281,10 +3268,6 @@ try{
 const user =
 await appwriteAccount.get();
 
-localStorage.setItem(
-"didgahUser",
-user.$id
-);
 
 loggedOut.style.display="none";
 loggedIn.style.display="block";
@@ -3299,9 +3282,6 @@ renderVoteHistory();
 
 }catch(error){
 
-localStorage.removeItem(
-"didgahUser"
-);
 
 loggedOut.style.display="block";
 loggedIn.style.display="none";
@@ -3790,9 +3770,6 @@ renderAdminLists();
 
 function adminLogout(){
 
-localStorage.removeItem(
-"didgahAdmin"
-);
 
 showPage("homePage");
 
