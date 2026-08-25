@@ -348,7 +348,6 @@ overflow:hidden;
 position:relative;
 min-height:52px;
 }
-
 .poll-result-label{
 position:relative;
 z-index:2;
@@ -358,6 +357,11 @@ align-items:center;
 padding:13px 14px;
 font-size:14px;
 line-height:1.7;
+transition:color .4s ease;
+}
+
+.poll-result-label.text-white{
+color:#fff;
 }
 
 .poll-result-percent{
@@ -1939,6 +1943,12 @@ html+=`
 <strong>${Number(poll.participants)||0}</strong>
 </span>
 
+<button
+type="button"
+onclick="sharePoll('${escapeJS(poll.id)}')">
+➤ ارسال
+</button>
+
 <span class="poll-time">
 🕒 شروع:
 ${escapeHTML(poll.start||"")}
@@ -2362,11 +2372,49 @@ info.innerText =
 wrapper.appendChild(info);
 
 }
+/* ================= SHARE POLL ================= */
+
+async function sharePoll(id){
+
+const poll=findPollById(id);
+if(!poll)return;
+
+const url=
+window.location.origin+
+window.location.pathname+
+"?poll="+encodeURIComponent(id);
+
+if(navigator.share){
+
+try{
+
+await navigator.share({
+
+title:"نظرسنجی دیدگاه",
+
+text:poll.question,
+
+url:url
+
+});
+
+}catch(e){}
+
+}else{
+
+await navigator.clipboard.writeText(url);
+
+alert("لینک نظرسنجی کپی شد.");
+
+}
+
+}
 
 
 /* ================= VOTE ================= */
 
 function submitVote(id){
+
 
 const user =
 localStorage.getItem(
