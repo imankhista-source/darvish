@@ -1043,17 +1043,19 @@ onclick="showPage('accountPage')">
 id="registerEmail"
 placeholder="ایمیل">
 
+
+<label>نام کاربری</label>
+
+<input type="text"
+id="registerUsername"
+placeholder="نام کاربری">
+
+
 <label>رمز عبور</label>
 
 <input type="password"
 id="registerPassword"
 placeholder="رمز عبور">
-
-<label>تکرار رمز عبور</label>
-
-<input type="password"
-id="registerPassword2"
-placeholder="تکرار رمز عبور">
 
 <button class="primary-btn"
 onclick="register()">
@@ -2915,7 +2917,10 @@ const email =
 document.getElementById(
 "registerEmail"
 ).value.trim();
-
+const username =
+document.getElementById(
+"registerUsername"
+).value.trim();
 const password =
 document.getElementById(
 "registerPassword"
@@ -2945,7 +2950,17 @@ message.style.display="block";
 return;
 
 }
+if(!username){
 
+message.innerText =
+"لطفاً نام کاربری خود را وارد کنید.";
+
+message.classList.add("error");
+message.style.display="block";
+
+return;
+
+}
 
 if(!isValidEmail(email)){
 
@@ -3016,7 +3031,8 @@ const user =
 await appwriteAccount.create(
 Appwrite.ID.unique(),
 email,
-password
+password,
+username
 );
 
 /* ایجاد Session برای ورود خودکار */
